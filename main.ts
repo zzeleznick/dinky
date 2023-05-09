@@ -94,7 +94,7 @@ const handlePost = async (rawUrl: string, body: string) => {
         const data = JSON.parse(body);
         link = data.link;
     } catch (err) {
-        console.error(`Err: ${err}`);
+        console.error(`Post Body parse error: ${err}`);
         return new Response(`Unexpected error`);
     }
 
@@ -102,6 +102,15 @@ const handlePost = async (rawUrl: string, body: string) => {
     if (!link) {
         return new Response(`No link!`);
     }
+
+    let targetUrl: URL;
+    try {
+        targetUrl = new URL(link);
+    } catch (err) {
+        console.error(`Parse Url error: ${err}`);
+        return new Response(`Malformed url: ${link}`);
+    }
+    const { hostname: targetHostname } = targetUrl;
 
     const shortcode = randomString();
     const key = [Key.Shortcode, shortcode];
@@ -112,9 +121,9 @@ const handlePost = async (rawUrl: string, body: string) => {
         .set(key, value)
         .commit();
 
-    const hostnameKey = [Key.Hostname, hostname];
+    const hostnameKey = [Key.Hostname, targetHostname];
     const linkKey = [Key.OriginalLink, link];
-    
+
     if (!newShortcode?.ok) {
         console.error(`Duplicate Shortcode: ${shortcode}`);
         return new Response(`Duplicate Shortcode Error!`);
