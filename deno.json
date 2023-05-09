@@ -4,6 +4,7 @@
     },
     "tasks": {
       "dev": "deno run --watch main.ts",
+      "bench": "deno bench bench.ts",
       "serve": "deno run --unstable --allow-env --allow-read --allow-net --allow-write --allow-ffi main.ts"
     }
   }
