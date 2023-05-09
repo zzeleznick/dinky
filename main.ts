@@ -24,10 +24,16 @@ const DB = await Deno.openKv();
 const Decoder = new TextDecoder();
 const exampleLink = 'https://jsonplaceholder.typicode.com/todos/1';
 
-const buildWelcomeMessage = (hostname: string) => {
-    const suffix = hostname === 'localhost' ? `:${PORT}` : '';
+const buildOutUrl = (protocol: string, hostname: string, shortcode = '') => {
+    const port = hostname === 'localhost' ? `:${PORT}` : '';
+    const suffix = shortcode ? `/${shortcode}` : '';
+    return `${protocol}//${hostname}${port}${suffix}`
+}
+
+const buildWelcomeMessage = (protocol: string, hostname: string) => {
+    const targetUrl = buildOutUrl(protocol, hostname);
     const codeBlock = `
-<code> curl -d '{"link": "${exampleLink}"}' ${hostname}${suffix} </code>
+<code> curl -d '{"link": "${exampleLink}"}' ${targetUrl} </code>
     `.trim();
     return `
 <html lang="en">
@@ -45,11 +51,11 @@ const buildWelcomeMessage = (hostname: string) => {
 
 const handleGet = async (rawUrl: string, ip: string) => {
     const url = new URL(rawUrl);
-    const {hostname, pathname} = url;
-    console.log(`hostname: ${hostname}, pathname: ${pathname}`);
+    const {protocol, hostname, pathname} = url;
+    console.log(`protocol: ${protocol}, hostname: ${hostname}, pathname: ${pathname}`);
     const shortcode = pathname.replace(/^\/+/g, '').trim();
     if (!shortcode) {
-        const res = buildWelcomeMessage(hostname);
+        const res = buildWelcomeMessage(protocol, hostname);
         return new Response(res);
     }
     // check for shortcode existence;
@@ -80,7 +86,7 @@ const handleGet = async (rawUrl: string, ip: string) => {
 
 const handlePost = async (rawUrl: string, body: string) => {
     const url = new URL(rawUrl);
-    const {hostname, pathname} = url;
+    const {protocol, hostname, pathname} = url;
 
     let link = '';
     console.log(`User posted: '${body}'`);
@@ -117,7 +123,9 @@ const handlePost = async (rawUrl: string, body: string) => {
     await DB.atomic().sum(hostnameKey, 1n).commit();
     await DB.atomic().sum(linkKey, 1n).commit();
 
-    return new Response(`Link: ${link}\nShortcode: ${shortcode}`);
+    const outUrl = buildOutUrl(protocol, hostname, shortcode);
+
+    return new Response(`Original: ${link}\nShortcode: ${shortcode}\nOut: ${outUrl}\n`);
 }
 
 const handler = async (req: Request, connInfo: ConnInfo) => {
