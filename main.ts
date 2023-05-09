@@ -1,5 +1,5 @@
 import {
-    serve,
+    Server,
     type ConnInfo,
 } from "https://deno.land/std@0.155.0/http/server.ts";
 
@@ -19,14 +19,39 @@ enum Key {
     VisitSum = "visits",
 }
 
+let PORT = 8000;
 const DB = await Deno.openKv();
 const Decoder = new TextDecoder();
+const exampleLink = 'https://jsonplaceholder.typicode.com/todos/1';
+
+const buildWelcomeMessage = (hostname: string) => {
+    const suffix = hostname === 'localhost' ? `:${PORT}` : '';
+    const codeBlock = `
+<code> curl -d '{"link": "${exampleLink}"}' ${hostname}${suffix} </code>
+    `.trim();
+    return `
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>🦕 Dinky</title>
+    </head>
+<body>
+    <h1>Welcome to Dinky</h1>
+    <p>Try running ${codeBlock} to get started</p>
+</body>
+</html>
+    `.trim();
+}
 
 const handleGet = async (rawUrl: string, ip: string) => {
     const url = new URL(rawUrl);
     const {hostname, pathname} = url;
     console.log(`hostname: ${hostname}, pathname: ${pathname}`);
-    const shortcode = pathname.replace(/^\/+/g, '');
+    const shortcode = pathname.replace(/^\/+/g, '').trim();
+    if (!shortcode) {
+        const res = buildWelcomeMessage(hostname);
+        return new Response(res);
+    }
     // check for shortcode existence;
     const originalBox = await DB.get([Key.Shortcode, shortcode]);
     const original = originalBox.value?.value;
@@ -95,7 +120,7 @@ const handlePost = async (rawUrl: string, body: string) => {
     return new Response(`Link: ${link}\nShortcode: ${shortcode}`);
 }
 
-serve(async (req: Request, connInfo: ConnInfo) => {
+const handler = async (req: Request, connInfo: ConnInfo) => {
     const {hostname} = connInfo.remoteAddr as Deno.NetAddr;
 
     if (RESET) {
@@ -115,5 +140,10 @@ serve(async (req: Request, connInfo: ConnInfo) => {
     } else {
         return new Response(`Method: ${method} not supported`);
     }
-    // MARK: EOF    
-});
+    // MARK: EOF
+}
+
+const server = new Server({ handler });
+const listener = Deno.listen({ port: PORT });
+console.log(`server listening on http://localhost:${PORT}`);
+await server.serve(listener);
