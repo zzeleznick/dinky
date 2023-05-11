@@ -49,9 +49,8 @@ export default function SignIn(props: SignInProps) {
   }
 
   useEffect(() => {
-    document.title = props.dummy ?? document.title;
     loadClerk();
-  }, [props.dummy]);
+  }, []);
 
   console.log(`SignIn render`);
   const button = loggedIn ? null : <SignInButton/>

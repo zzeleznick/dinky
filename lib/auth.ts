@@ -109,11 +109,35 @@ export const jwtVerify = async (jwt: string) => {
   }
 }
 
-export async function ensureLoggedInMiddleware(
+export interface CtxWithAuth {
+  user?: string;
+}
+
+export const addUserToReqCtx = async (
   req: Request,
-  ctx: MiddlewareHandlerContext,
-) {
-  if (!ctx.state.session) {
+  ctx: MiddlewareHandlerContext<CtxWithAuth>,
+) => {
+  const jwt = getCookie(req);
+  let user: undefined | string;
+  try {
+    const payload = await jwtVerify(jwt);
+    user = payload.sub
+  } catch(err) {
+    if (err instanceof EmptyTokenError) {
+      // pass
+    } else {
+      console.error(`JWT err: ${err}`)
+    }
+  }
+  ctx.state.user = user;
+}
+
+export const ensureLoggedInMiddleware = async (
+  req: Request,
+  ctx: MiddlewareHandlerContext<CtxWithAuth>,
+) => {
+
+  if (!ctx.state.user) {
     return redirect(`/login?redirect_url=${encodeURIComponent(req.url)}`);
   }
 

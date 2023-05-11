@@ -7,7 +7,8 @@ import * as $0 from "./routes/[shortcode].tsx";
 import * as $1 from "./routes/_middleware.ts";
 import * as $2 from "./routes/api/joke.ts";
 import * as $3 from "./routes/index.tsx";
-import * as $4 from "./routes/stats.tsx";
+import * as $4 from "./routes/login.tsx";
+import * as $5 from "./routes/stats.tsx";
 import * as $$0 from "./islands/CopyButton.tsx";
 import * as $$1 from "./islands/Counter.tsx";
 import * as $$2 from "./islands/SignIn.tsx";
@@ -18,7 +19,8 @@ const manifest = {
     "./routes/_middleware.ts": $1,
     "./routes/api/joke.ts": $2,
     "./routes/index.tsx": $3,
-    "./routes/stats.tsx": $4,
+    "./routes/login.tsx": $4,
+    "./routes/stats.tsx": $5,
   },
   islands: {
     "./islands/CopyButton.tsx": $$0,

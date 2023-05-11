@@ -1,46 +1,42 @@
 // routes/_middleware.ts
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
-import { getCookie, jwtVerify, EmptyTokenError } from "../lib/auth.ts";
-
-
-interface State {
-  user?: string;
-}
+import { addUserToReqCtx, ensureLoggedInMiddleware, CtxWithAuth } from "../lib/auth.ts";
 
 const ASSET_PATH_EXP = /(^\/_frsh)|(^\/(logo\.svg|favicon\.ico))/
+const PROTECTED_PATH_EXP = /(^\/stats)/
 
 const isAssetPath = (pathname: string) => {
   return ASSET_PATH_EXP.test(pathname)
 }
 
+const isProtectedPath = (pathname: string) => {
+  return PROTECTED_PATH_EXP.test(pathname)
+}
+
 export async function handler(
   req: Request,
-  ctx: MiddlewareHandlerContext<State>,
+  ctx: MiddlewareHandlerContext<CtxWithAuth>,
 ) {
   const { pathname } = new URL(req.url);
   const start = performance.now();
+  // MARK: skip auth for asset paths
   if (isAssetPath(pathname)) {
     return await ctx.next();
   }
-  const jwt = getCookie(req);
-  let user: undefined | string;
-  try {
-    const payload = await jwtVerify(jwt);
-    user = payload.sub
-  } catch(err) {
-    if (err instanceof EmptyTokenError) {
-      // pass
-    } else {
-      console.error(`JWT err: ${err}`)
-    }
+  // MARK: add user if present
+  await addUserToReqCtx(req, ctx);
+  // MARK: validate request for protected paths
+  let resp;
+  if (isProtectedPath(pathname)) {
+    resp = await ensureLoggedInMiddleware(req, ctx)
+    resp.headers.set("X-Dinky-Authed", "true");
+  } else { // skip auth check
+    resp = await ctx.next();
   }
-  ctx.state.user = user;
-  const resp = await ctx.next();
   const diff = Math.floor(performance.now() - start);
-  console.log(`Request for pathname: '${pathname}' url: ${req.url} took ${diff} ms | ${user}`);
-  resp.headers.set("X-ZZ", "awesome");
+  console.log(`Request for pathname: '${pathname}' url: ${req.url} took ${diff} ms`);
+  resp.headers.set("X-Dinky", "Linky");
   return resp;
 }
-
 
     
