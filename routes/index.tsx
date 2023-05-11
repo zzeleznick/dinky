@@ -8,19 +8,11 @@ import {
 } from "../lib.ts";
 
 interface Data {
-  hostname: string;
-  port?: number;
+  targetUrl: string;
 }
 
 const Decoder = new TextDecoder();
 const exampleLink = 'https://jsonplaceholder.typicode.com/todos/1';
-
-const buildOutUrl = (hostname: string, port?: number, shortcode = '') => {
-  const protocol = (hostname == "localhost" || hostname == "127.0.0.1") ? "http:" : "https:";
-  port = port ? `:${port}` : '';
-  shortcode = shortcode ? `/${shortcode}` : '';
-  return `${protocol}//${hostname}${port}${shortcode}`
-}
 
 const extractLink = (body: string) => {
   let link = '';
@@ -47,10 +39,9 @@ const extractLink = (body: string) => {
     console.error(`URL parse error: ${err}`);
     return;
   }
-  return;
 }
 
-const shortcodeForUrl = async (targetUrl: URL, srcHostname: string, port?: number) => {
+const shortcodeForUrl = async (targetUrl: URL, srcUrl: URL) => {
   const { href, hostname: targetHostname } = targetUrl;
   const shortcode = randomString();
   const key = [Key.Shortcode, shortcode];
@@ -71,32 +62,30 @@ const shortcodeForUrl = async (targetUrl: URL, srcHostname: string, port?: numbe
 
   await DB.atomic().sum(hostnameKey, 1n).commit();
   await DB.atomic().sum(linkKey, 1n).commit();
-
-  const outUrl = buildOutUrl(srcHostname, port, shortcode);
+  const outUrl = `${srcUrl.href.replace(/\/+$/g, '')}/${shortcode}`;
   return new Response(`Original: ${href}\nShortcode: ${shortcode}\nOut: ${outUrl}\n`);
 }
-
 export const handler: Handlers<Data | null> = {
   async GET(req: Request, ctx: HandlerContext)  {
-    const { hostname, port } = ctx.localAddr as Deno.NetAddr;
-    return ctx.render({port, hostname});
+    const { href: targetUrl } = new URL(req.url);
+    return ctx.render({targetUrl});
   },
-  async POST(req: Request, ctx: HandlerContext)  {
-    const { hostname: srcHostname, port } = ctx.localAddr as Deno.NetAddr;
+  async POST(req: Request, _ctx: HandlerContext)  {
+    // const { hostname: srcHostname, port } = ctx.localAddr as Deno.NetAddr;
+    const srcUrl = new URL(req.url);
     const buf = await req.arrayBuffer();
-    const body = await Decoder.decode(buf);
+    const body = Decoder.decode(buf);
     const link = extractLink(body);
     if (!link) {
       return new Response('Malformed Request', { status: 400 });
     }
-    return await shortcodeForUrl(link, srcHostname, port);
+    return await shortcodeForUrl(link, srcUrl);
   },
 };
 
 export default function Page({ data }: PageProps<Data>) {
-  const { hostname, port } = data;
-  const targetUrl = buildOutUrl(hostname, port, '');
-  const text = `curl -d '{"link": "${exampleLink}"}' ${targetUrl}`
+  const { targetUrl } = data;
+  const text = `curl -d '{"link": "${exampleLink}"}' ${targetUrl.replace(/\/+$/g, '')}`
   const codeBlock = <pre class="pb-4"><code> {text} </code></pre>
   return (
     <>

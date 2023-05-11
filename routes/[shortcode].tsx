@@ -31,10 +31,10 @@ const redirectForShortcode = async (shortcode: string, ip: string) => {
   return Response.redirect(original, 302);
 }
 
-export const handler = async (req: Request, ctx: HandlerContext): Response => {
+export const handler = async (req: Request, ctx: HandlerContext) => {
   const { url: rawUrl } = req;
   const url = new URL(rawUrl);
-  const { origin, hostname, pathname } = url;
+  const { origin, pathname } = url;
   const shortcode = pathname.replace(/^\/+/g, '').trim();
   if (!shortcode) {
     return Response.redirect(origin, 302)
