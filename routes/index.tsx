@@ -1,6 +1,12 @@
 import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/runtime.ts";
 import Counter from "../islands/Counter.tsx";
+import SignIn from "../islands/SignIn.tsx";
+import {
+  PK,
+  frontendApi,
+} from "../lib/auth.ts";
+
 import {
   Key,
   DB,
@@ -103,6 +109,7 @@ export default function Page({ data }: PageProps<Data>) {
             Try running {codeBlock} to get started
           </p>
           <Counter start={3} />
+          <SignIn frontendApi={frontendApi} publicKey={PK} dummy={"zz"} />
         </div>
       </body>
     </>
