@@ -36,6 +36,9 @@ export default function SignIn(props: SignInProps) {
           Clerk.mountUserButton(userButton as HTMLDivElement);
           userButton.style.margin = "auto";
           setLoggedIn(true);
+          // MARK: we can create a custom session token if necessary ...
+          // const token = await Clerk.session.getToken({ template: 'Fresh' })
+          // console.log(`Token: ${JSON.stringify(token, null, 2)}`)
         }
       } catch(err) {
         console.error(`Failed to load clerk: ${err}`)

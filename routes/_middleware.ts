@@ -1,15 +1,16 @@
 // routes/_middleware.ts
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
-import { getCookie, jwtVerify } from "../lib/auth.ts";
+import { getCookie, jwtVerify, EmptyTokenError } from "../lib/auth.ts";
+
 
 interface State {
-  data: string;
+  user?: string;
 }
 
-const PUBLIC_PATH_EXP = /(^\/_frsh)|(^\/(logo\.svg|favicon\.ico))/
+const ASSET_PATH_EXP = /(^\/_frsh)|(^\/(logo\.svg|favicon\.ico))/
 
-const isPublic = (pathname: string) => {
-    return PUBLIC_PATH_EXP.test(pathname)
+const isAssetPath = (pathname: string) => {
+  return ASSET_PATH_EXP.test(pathname)
 }
 
 export async function handler(
@@ -18,19 +19,25 @@ export async function handler(
 ) {
   const { pathname } = new URL(req.url);
   const start = performance.now();
-  if (isPublic(pathname)) {
+  if (isAssetPath(pathname)) {
     return await ctx.next();
   }
   const jwt = getCookie(req);
+  let user: undefined | string;
   try {
-    await jwtVerify(jwt);
+    const payload = await jwtVerify(jwt);
+    user = payload.sub
   } catch(err) {
-    console.error(`JWT err: ${err}`)
+    if (err instanceof EmptyTokenError) {
+      // pass
+    } else {
+      console.error(`JWT err: ${err}`)
+    }
   }
-  ctx.state.data = jwt;
+  ctx.state.user = user;
   const resp = await ctx.next();
   const diff = Math.floor(performance.now() - start);
-  console.log(`Request for pathname: '${pathname}' url: ${req.url} took ${diff} ms | ${jwt}`);
+  console.log(`Request for pathname: '${pathname}' url: ${req.url} took ${diff} ms | ${user}`);
   resp.headers.set("X-ZZ", "awesome");
   return resp;
 }

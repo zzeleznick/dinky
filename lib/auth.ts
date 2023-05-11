@@ -87,10 +87,14 @@ export const getCookie = (req: Request, name = "__session") => {
 
 export const jwtVerify = async (jwt: string) => {
   const publicKey = await jose.importJWK(LocalWellKnownKeys?.[0], "RS256");
+  if (!jwt) {
+    throw new EmptyTokenError('Please log in')
+  }
   try {
     const decoded = await jose.jwtVerify(jwt, publicKey, {});
     const { payload } = decoded;
     console.log(`Payload: ${JSON.stringify(payload)}`);
+    return payload;
   } catch(err) {
     if((err as JWTClaimValidationFailed).code == "ERR_JWT_EXPIRED") {
       console.warn(`JWT is expired`);
