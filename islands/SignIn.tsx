@@ -1,10 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
 
-// interface Clerk {
-//   openSignIn: () => void;
-//   load: () => Promise<void>;
-// }
-
 interface SignInProps {
   publicKey: string;
   frontendApi: string;

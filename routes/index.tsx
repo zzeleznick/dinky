@@ -1,6 +1,7 @@
 import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/runtime.ts";
 import Counter from "../islands/Counter.tsx";
+import CopyButton from "../islands/CopyButton.tsx";
 import SignIn from "../islands/SignIn.tsx";
 import {
   PK,
@@ -92,7 +93,16 @@ export const handler: Handlers<Data | null> = {
 export default function Page({ data }: PageProps<Data>) {
   const { targetUrl } = data;
   const text = `curl -d '{"link": "${exampleLink}"}' ${targetUrl.replace(/\/+$/g, '')}`
-  const codeBlock = <pre class="pb-4"><code> {text} </code></pre>
+  const codeBlock = (
+    <div>
+      <div class="h-8 w-full bg-gray-200 flex justify-end">
+        <CopyButton className="px-4" content={text} />
+      </div>
+       <pre class="px-2 py-4 relative whitespace-pre-line bg-gray-100">
+        <code>{text}</code>
+      </pre>
+    </div>
+  )
   return (
     <>
       <Head>
@@ -105,9 +115,11 @@ export default function Page({ data }: PageProps<Data>) {
             class="w-32 h-32"
             alt="the fresh logo: a sliced lemon dripping with juice"
           />
-          <p class="py-6">
-            Try running {codeBlock} to get started
-          </p>
+          <div class="py-6 flex flex-col gap-8">
+            <div>Try running</div>
+            {codeBlock} 
+            <div>to get started</div>
+          </div>
           <Counter start={3} />
           <SignIn frontendApi={frontendApi} publicKey={PK} dummy={"zz"} />
         </div>
