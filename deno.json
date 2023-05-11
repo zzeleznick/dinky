@@ -1,10 +1,12 @@
 {
-    "imports": {
-      "std/": "https://deno.land/std@0.185.0/"
-    },
-    "tasks": {
-      "dev": "deno run --watch main.ts",
-      "bench": "deno bench bench.ts",
-      "serve": "deno run --unstable --allow-env --allow-read --allow-net --allow-write --allow-ffi main.ts"
-    }
+  "importMap": "./import_map.json",
+  "tasks": {
+    "start": "deno run -A --watch=static/,routes/ --unstable dev.ts",
+    "bench": "deno bench bench.ts",
+    "serve": "deno run --unstable --allow-env --allow-read --allow-net --allow-write --allow-ffi main.ts"
+  },
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
   }
+}
