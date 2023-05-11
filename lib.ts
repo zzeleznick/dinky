@@ -3,6 +3,17 @@ const UAN_MAP = new Map(
     UNAMBIGOUS_ALPHA_NUMERICS.split('').map((e, i) => [i, e])
 )
 
+export enum Key {
+    OriginalLink = "original",
+    Hostname = "hostname",
+    Shortcode = "shortcode",
+    Visitor = "visitor",
+    VisitorSum = "visitors",
+    VisitSum = "visits",
+  }
+  
+export const DB = await Deno.openKv();
+
 // returns random int in range [min, max)
 const randomInt = (min = 0, max = 10) => {
     return Math.floor(Math.random() * (max - min)) + min;

@@ -2,7 +2,11 @@
 
 Link shortener
 
-## Usage
+### Usage
 
-TODO
+Start the project:
+
+```
+deno task start
+```
 
