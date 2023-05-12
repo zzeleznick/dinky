@@ -18,7 +18,7 @@ const Header = (props: HeaderProps) => {
           <div className=""> Home </div>
         </div>
         <div className="flex flex-row px-8 md:px-12 md:gap-x-8 gap-x-4 justify-between">
-          <SignIn publicKey={publicKey} frontendApi={frontendApi}/>
+          <SignIn path='/' publicKey={publicKey} frontendApi={frontendApi}/>
         </div>
       </div>
     </div>

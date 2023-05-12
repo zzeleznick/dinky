@@ -1,8 +1,11 @@
+import { IS_BROWSER } from "$fresh/runtime.ts";
 import { useEffect, useState } from "preact/hooks";
 
 interface SignInProps {
   publicKey: string;
   frontendApi: string;
+  path: string;
+  redirectUrl?: string;
   showOnLoad?: boolean; 
 }
 
@@ -19,14 +22,20 @@ interface User {
 }
 
 interface ClerkListenerProps {
-  user?: User;
+  user?: User | null;
 }
 
 export default function SignIn(props: SignInProps) {
-  const { publicKey, frontendApi, showOnLoad = false} = props;
+  const { 
+    publicKey,
+    frontendApi,
+    path,
+    redirectUrl,
+    showOnLoad = false,
+  } = props;
   const [loggedIn, setLoggedIn] = useState(false);
   const loadClerk = () => {
-    console.log(`Load start`);
+    console.log(`Clerk load start`);
     const script = document.createElement('script');
     script.setAttribute('data-clerk-frontend-api', frontendApi);
     script.setAttribute('data-clerk-publishable-key', publicKey);
@@ -36,7 +45,9 @@ export default function SignIn(props: SignInProps) {
     script.addEventListener('load', async function() {
       const Clerk = window.Clerk;
       try {
-        await Clerk?.load({});
+        await Clerk?.load({
+          afterSignInUrl: redirectUrl,
+        });
         console.log(`Clerk loaded`);
         Clerk?.addListener((props: ClerkListenerProps) => {
           // Display links conditionally based on user state
@@ -49,7 +60,12 @@ export default function SignIn(props: SignInProps) {
         });
         if (showOnLoad) {
           const signInButton = document.getElementById("sign-in-button");
-          signInButton && window.Clerk?.mountSignIn(signInButton as HTMLDivElement);
+          signInButton && window.Clerk?.mountSignIn(signInButton as HTMLDivElement, {
+            path,
+            routing: "path",
+            afterSignInUrl: redirectUrl,
+            redirectUrl,
+          });
           return
         }
         const userButton = document.getElementById("user-button");
@@ -74,7 +90,8 @@ export default function SignIn(props: SignInProps) {
     loadClerk();
   }, []);
 
-  console.log(`SignIn render`);
+  const context = IS_BROWSER ? 'client' : 'server';
+  console.log(`[${context}] SignIn render for path '${path}'`);
   const button = (loggedIn || showOnLoad) ? null : <SignInButton/>
   const mountedButton = showOnLoad ? <div id="sign-in-button"/> : <div id="user-button"/>
   const containerExtraClassNames = showOnLoad ? "h-full" : ""

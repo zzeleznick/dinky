@@ -8,11 +8,20 @@ import {
   frontendApi,
 } from "../lib/auth.ts";
 
-export const handler = (_req: Request, ctx: HandlerContext) => {
-  return ctx.render({});
+interface LoginProps {
+  path: string;
+  redirectUrl?: string;
+}
+
+export const handler = (req: Request, ctx: HandlerContext) => {
+  console.log(`login route with url ${req.url}`);
+  const { pathname, searchParams } = new URL(req.url);
+  const redirectUrl = searchParams && searchParams.get("redirect_url");
+  return ctx.render({redirectUrl, path: pathname});
 };
 
-export default function Page({ data }: PageProps<unknown>) {
+export default function Page({ data }: PageProps<LoginProps>) {
+  const { path, redirectUrl } = data;
   return (
     <>
       <Head>
@@ -20,7 +29,8 @@ export default function Page({ data }: PageProps<unknown>) {
       </Head>
       <body>
         <div className="flex flex-row min-h-screen bg-gray-200 items-center justify-center">
-          <SignIn publicKey={publishableKey} frontendApi={frontendApi} showOnLoad={true}/>
+          <SignIn path={path} redirectUrl={redirectUrl}
+            publicKey={publishableKey} frontendApi={frontendApi} showOnLoad={true}/>
         </div>
       </body>
     </>

@@ -1,17 +1,11 @@
-import { HandlerContext } from "$fresh/server.ts";
+import { HandlerContext, PageProps } from "$fresh/server.ts";
 import { asset, Head } from "$fresh/runtime.ts";
-import {
-  Key,
-  DB,
-} from "../../lib.ts";
+import { getAllLinks } from "../../lib/api.ts";
+import { LinkDatumWithKey } from "../../lib/db.ts";
 
-const getAllLinks = async () => {
-  const iter = DB.list({ prefix: [Key.Shortcode] });
-  const links = [];
-  for await (const { value, key } of iter) {
-    links.push({key, ...value});
-  }
-  return links;
+interface Data {
+  targetUrl: string;
+  links?: LinkDatumWithKey[];
 }
 
 export const handler = async (req: Request, ctx: HandlerContext) => {
@@ -21,7 +15,7 @@ export const handler = async (req: Request, ctx: HandlerContext) => {
 };
 
 export default function Page({ data }: PageProps<Data>) {
-  const { targetUrl, links } = data;
+  const { targetUrl, links = [] } = data;
 
   const linkList = links.map((v, i) => {
     const {
@@ -55,6 +49,12 @@ export default function Page({ data }: PageProps<Data>) {
         <ol class="my-links">
           { linkList }
         </ol>
+      </div>
+    )
+  } else {
+    myLinks = (
+      <div class="flex flex-col">
+        <div class="text-lg pb-2">No Links Yet!</div>
       </div>
     )
   }
