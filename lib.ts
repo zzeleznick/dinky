@@ -7,6 +7,7 @@ export enum Key {
     OriginalLink = "original",
     Hostname = "hostname",
     Shortcode = "shortcode",
+    ShortcodeByUser = "shortcode_user",
     Visitor = "visitor",
     VisitorSum = "visitors",
     VisitSum = "visits",
