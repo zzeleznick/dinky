@@ -2,7 +2,7 @@
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { addUserToReqCtx, ensureLoggedInMiddleware, CtxWithAuth } from "../lib/auth.ts";
 
-const ASSET_PATH_EXP = /(^\/_frsh)|(^\/(logo\.svg|favicon\.ico))/
+const ASSET_PATH_EXP = /(^\/_frsh)|(^\/styles)|(^\/(logo\.svg|favicon\.ico))/
 const PROTECTED_PATH_EXP = /(^\/stats)/
 
 const isAssetPath = (pathname: string) => {

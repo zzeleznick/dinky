@@ -1,8 +1,9 @@
 {
   "imports": {
-    "@clerk/clerk-js": "https://esm.sh/*@clerk/clerk-js@4.39.0/",
+    "@clerk/clerk-js": "https://esm.sh/@clerk/clerk-js@4.39.0/",
     "jose": "https://esm.sh/jose@4.14.4",
     "$fresh/": "https://deno.land/x/fresh@1.1.5/",
+    "postcss/": "https://deno.land/x/postcss@8.4.16/",
     "preact": "https://esm.sh/preact@10.13.1",
     "preact/": "https://esm.sh/preact@10.13.1/",
     "preact-render-to-string": "https://esm.sh/*preact-render-to-string@5.2.6",

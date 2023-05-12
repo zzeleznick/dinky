@@ -1,7 +1,7 @@
 import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
-import { Head } from "$fresh/runtime.ts";
-import Counter from "../islands/Counter.tsx";
+import { asset, Head } from "$fresh/runtime.ts";
 import CopyButton from "../islands/CopyButton.tsx";
+import CreateLink from "../islands/CreateLink.tsx";
 import Header from "../components/Header.tsx";
 import {
   publishableKey,
@@ -107,6 +107,7 @@ export default function Page({ data }: PageProps<Data>) {
     <>
       <Head>
         <title>🦕 Dinky</title>
+        <link rel="stylesheet" href={asset("/styles/globals.css")} />
       </Head>
       <body>
         <Header frontendApi={frontendApi} publicKey={publishableKey} />
@@ -121,7 +122,10 @@ export default function Page({ data }: PageProps<Data>) {
             {codeBlock} 
             <div>to get started</div>
           </div>
-          <Counter start={3} />
+          <div class="py-6">Or click on the button below!</div>
+          <div class="flex items-center justify-center h-8">
+            <CreateLink />
+          </div>
         </div>
       </body>
     </>
