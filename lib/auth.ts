@@ -104,6 +104,11 @@ export const jwtVerify = async (jwt: string) => {
 
 export interface CtxWithAuth {
   user?: string;
+  admin?: boolean;
+}
+
+const isAdmin = (user?: string) => {
+  return Boolean(ADMIN_ID && user && user === ADMIN_ID)
 }
 
 export const addUserToReqCtx = async (
@@ -125,6 +130,7 @@ export const addUserToReqCtx = async (
     }
   }
   ctx.state.user = user;
+  ctx.state.admin = isAdmin(user);
 }
 
 export const ensureLoggedInMiddleware = async (
@@ -146,7 +152,7 @@ export const ensureAdminMiddleware = async (
 
   console.log('ensureAdminMiddleware', ctx.state.user, ADMIN_ID);
 
-  if (!(ADMIN_ID && ctx.state.user === ADMIN_ID)) {
+  if (!ctx.state.admin) {
     return redirect(`/login?redirect_url=${encodeURIComponent(req.url)}`);
   }
 

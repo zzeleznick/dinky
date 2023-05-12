@@ -20,6 +20,7 @@ import {
 
 interface Data {
   targetUrl: string;
+  admin?: boolean;
   links?: LinkDatum[];
 }
 
@@ -57,12 +58,12 @@ export const handler: Handlers = {
   async GET(req: Request, ctx: HandlerContext)  {
     const { href: targetUrl } = new URL(req.url);
     const user = ctx.state?.user as string;
+    const admin = ctx.state?.admin;
     let links = [];
     if (user) {
       links = await getLinksForUser(user);
     }
-    console.log(`Links: ${JSON.stringify(links)}`);
-    return ctx.render({targetUrl, links});
+    return ctx.render({admin, targetUrl, links});
   },
   async POST(req: Request, ctx: HandlerContext)  {
     const { hostname: remoteIp } = ctx.remoteAddr as Deno.NetAddr;
@@ -93,7 +94,7 @@ export const handler: Handlers = {
 };
 
 export default function Page({ data }: PageProps<Data>) {
-  const { targetUrl, links = [] } = data;
+  const { admin, targetUrl, links = [] } = data;
   const text = `curl -d '{"link": "${exampleLink}"}' ${targetUrl.replace(/\/+$/g, '')}`
   const codeBlock = (
     <div>
@@ -147,7 +148,7 @@ export default function Page({ data }: PageProps<Data>) {
         <link rel="stylesheet" href={asset("/styles/globals.css")} />
       </Head>
       <body>
-        <Header frontendApi={frontendApi} publicKey={publishableKey} />
+        <Header admin={admin} frontendApi={frontendApi} publicKey={publishableKey} />
         <div class="p-4 mx-auto max-w-screen-md">
           <img
             src="/logo.svg"

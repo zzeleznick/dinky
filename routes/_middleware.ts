@@ -1,7 +1,6 @@
 // routes/_middleware.ts
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
 import { addUserToReqCtx, ensureLoggedInMiddleware, CtxWithAuth } from "../lib/auth.ts";
-import { redirect } from "../lib/http.ts";
 
 const ASSET_PATH_EXP = /(^\/_frsh)|(^\/styles)|(^\/(logo\.svg|favicon\.ico))/
 const PROTECTED_PATH_EXP = /(^\/stats)|(^\/admin)/

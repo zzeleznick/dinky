@@ -1,14 +1,14 @@
 import { useState, useRef, useEffect } from "preact/hooks";
 
 interface LinkInputProps {
-  onLinkValidation?: (valid: boolean | string) => void;
+  onLinkValidation?: (valid: boolean | URL) => void;
 }
 
 interface CreateLinkProps {
   targetUrl: string;
 }
 
-const submitUrl = async (endpoint: string, link: URL) => {
+const submitUrl = async (endpoint: string, link: boolean | URL) => {
   if (!link) {
     console.warn(`bad link: ${link}`)
     return
@@ -38,7 +38,7 @@ const LinkInput = (props: LinkInputProps) => {
   const [validationText, setValidationText] = useState('');
   const startCheck = useRef(performance.now());
 
-  const validateUrl = (url) => {
+  const validateUrl = (url: string) => {
     try {
       return new URL(url)
     } catch(err) {
@@ -81,7 +81,7 @@ const LinkInput = (props: LinkInputProps) => {
 }
 
 export default function CreateLink(props: CreateLinkProps) {
-  const [validLink, setLinkValid] = useState(false);
+  const [validLink, setLinkValid] = useState<boolean|URL>(false);
   const {
     targetUrl,
   } = props;

@@ -2,20 +2,27 @@ import { HandlerContext, PageProps } from "$fresh/server.ts";
 import { asset, Head } from "$fresh/runtime.ts";
 import { getAllLinks } from "../../lib/api.ts";
 import { LinkDatumWithKey } from "../../lib/db.ts";
+import {
+  publishableKey,
+  frontendApi,
+} from "../../lib/auth.ts";
+import Header from "../../components/Header.tsx";
 
 interface Data {
   targetUrl: string;
+  admin?: boolean;
   links?: LinkDatumWithKey[];
 }
 
 export const handler = async (req: Request, ctx: HandlerContext) => {
   const { origin: targetUrl } = new URL(req.url);
+  const admin = ctx.state?.admin;
   const links = await getAllLinks();
-  return ctx.render({links, targetUrl});
+  return ctx.render({admin, links, targetUrl});
 };
 
 export default function Page({ data }: PageProps<Data>) {
-  const { targetUrl, links = [] } = data;
+  const { admin, targetUrl, links = [] } = data;
 
   const linkList = links.map((v, i) => {
     const {
@@ -45,7 +52,7 @@ export default function Page({ data }: PageProps<Data>) {
   if (linkList.length) {
     myLinks = (
       <div class="flex flex-col">
-        <div class="text-lg pb-2">All Links</div>
+        <div class="font-bold text-lg md:text-2xl pb-2">All Links</div>
         <ol class="my-links">
           { linkList }
         </ol>
@@ -54,7 +61,7 @@ export default function Page({ data }: PageProps<Data>) {
   } else {
     myLinks = (
       <div class="flex flex-col">
-        <div class="text-lg pb-2">No Links Yet!</div>
+        <div class="font-bold text-lg md:text-2xl">No Links Yet!</div>
       </div>
     )
   }
@@ -66,6 +73,7 @@ export default function Page({ data }: PageProps<Data>) {
         <link rel="stylesheet" href={asset("/styles/globals.css")} />
       </Head>
       <body>
+      <Header admin={admin} frontendApi={frontendApi} publicKey={publishableKey} />
         <div class="p-4 mx-auto max-w-screen-md">
           { myLinks }
         </div>
