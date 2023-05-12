@@ -5,8 +5,8 @@ import * as jose from 'jose';
 import { getCookies } from "std/http/cookie.ts";
 import { redirect } from "./http.ts";
 
-export const PK = Deno.env.get("CLERK_PUBLISHABLE_KEY")!;
-export const clerk = new Clerk(PK);
+export const publishableKey = Deno.env.get("CLERK_PUBLISHABLE_KEY")!;
+export const clerk = new Clerk(publishableKey);
 export const frontendApi = clerk.frontendApi;
 
 const CLERK_KID = Deno.env.get("CLERK_KID")!;

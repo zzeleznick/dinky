@@ -3,7 +3,7 @@ import { useEffect, useState } from "preact/hooks";
 interface SignInProps {
   publicKey: string;
   frontendApi: string;
-  dummy?: string; 
+  showOnLoad?: boolean; 
 }
 
 const SignInButton = () => {
@@ -15,7 +15,7 @@ const SignInButton = () => {
 }
 
 export default function SignIn(props: SignInProps) {
-  const { publicKey, frontendApi, dummy = ''} = props;
+  const { publicKey, frontendApi, showOnLoad = false} = props;
   const [loggedIn, setLoggedIn] = useState(false);
   const loadClerk = () => {
     console.log(`Load start`);
@@ -30,6 +30,11 @@ export default function SignIn(props: SignInProps) {
       try {
         await Clerk?.load({});
         console.log(`Clerk loaded`);
+        if (showOnLoad) {
+          const signInButton = document.getElementById("sign-in-button");
+          signInButton && window.Clerk?.mountSignIn(signInButton as HTMLDivElement);
+          return
+        }
         const userButton = document.getElementById("user-button");
         if (userButton && Clerk?.user) {
           // Mount user button component
@@ -53,13 +58,13 @@ export default function SignIn(props: SignInProps) {
   }, []);
 
   console.log(`SignIn render`);
-  const button = loggedIn ? null : <SignInButton/>
-
+  const button = (loggedIn || showOnLoad) ? null : <SignInButton/>
+  const mountedButton = showOnLoad ? <div id="sign-in-button"/> : <div id="user-button"/>
+  const containerExtraClassNames = showOnLoad ? "h-full" : ""
   return (    
-    <div class="flex gap-2 w-full py-6">
-      <p class="flex-grow-1 font-bold text-xl">{dummy}</p>
+    <div class={`flex gap-2 w-full items-center justify-center ${containerExtraClassNames}`}>
       { button }
-      <div id="user-button"></div>
+      { mountedButton }
     </div>
   );
 }

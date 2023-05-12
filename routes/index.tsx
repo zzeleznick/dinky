@@ -2,9 +2,9 @@ import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
 import { Head } from "$fresh/runtime.ts";
 import Counter from "../islands/Counter.tsx";
 import CopyButton from "../islands/CopyButton.tsx";
-import SignIn from "../islands/SignIn.tsx";
+import Header from "../components/Header.tsx";
 import {
-  PK,
+  publishableKey,
   frontendApi,
 } from "../lib/auth.ts";
 
@@ -109,6 +109,7 @@ export default function Page({ data }: PageProps<Data>) {
         <title>🦕 Dinky</title>
       </Head>
       <body>
+        <Header frontendApi={frontendApi} publicKey={publishableKey} />
         <div class="p-4 mx-auto max-w-screen-md">
           <img
             src="/logo.svg"
@@ -121,7 +122,6 @@ export default function Page({ data }: PageProps<Data>) {
             <div>to get started</div>
           </div>
           <Counter start={3} />
-          <SignIn frontendApi={frontendApi} publicKey={PK} dummy={"zz"} />
         </div>
       </body>
     </>
