@@ -124,7 +124,7 @@ export default function Page({ data }: PageProps<Data>) {
           </div>
           <div class="py-6">Or click on the button below!</div>
           <div class="flex items-center justify-center h-8">
-            <CreateLink />
+            <CreateLink targetUrl={targetUrl}/>
           </div>
         </div>
       </body>
