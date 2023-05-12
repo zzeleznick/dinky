@@ -90,8 +90,8 @@ const shortcodeForUrl = async (targetUrl: URL, srcUrl: URL, user: string) => {
 const getLinksForUser = async (user: string) => {
   const iter = DB.list({ prefix: [Key.ShortcodeByUser, user] });
   const links = [];
-  for await (const { value } of iter) {
-    links.push(value);
+  for await (const { value, key } of iter) {
+    links.push({key, ...value});
   }
   return links;
 }

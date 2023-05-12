@@ -9,6 +9,7 @@ export const publishableKey = Deno.env.get("CLERK_PUBLISHABLE_KEY")!;
 export const clerk = new Clerk(publishableKey);
 export const frontendApi = clerk.frontendApi;
 
+const ADMIN_ID = Deno.env.get("CLERK_ADMIN_ID")!;
 const CLERK_KID = Deno.env.get("CLERK_KID")!;
 const CLERK_N = Deno.env.get("CLERK_N")!;
 
@@ -139,6 +140,20 @@ export const ensureLoggedInMiddleware = async (
 
   if (!ctx.state.user) {
     return redirect(`/login?redirect_url=${encodeURIComponent(req.url)}`);
+  }
+
+  return await ctx.next();
+}
+
+export const ensureAdminMiddleware = async (
+  req: Request,
+  ctx: MiddlewareHandlerContext<CtxWithAuth>,
+) => {
+
+  console.log('ensureAdminMiddleware', ctx.state.user, ADMIN_ID);
+
+  if (!(ADMIN_ID && ctx.state.user === ADMIN_ID)) {
+    return redirect(`/`);
   }
 
   return await ctx.next();
