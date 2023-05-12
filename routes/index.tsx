@@ -183,6 +183,7 @@ export default function Page({ data }: PageProps<Data>) {
             class="w-32 h-32"
             alt="the fresh logo: a sliced lemon dripping with juice"
           />
+          <h1 class="text-xl md:text-2xl font-bold">Dinky Linky</h1>
           <div class="py-6 flex flex-col gap-8">
             <div>Try running</div>
             {codeBlock} 
