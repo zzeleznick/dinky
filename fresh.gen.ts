@@ -6,32 +6,36 @@ import config from "./deno.json" assert { type: "json" };
 import * as $0 from "./routes/[shortcode].tsx";
 import * as $1 from "./routes/_middleware.ts";
 import * as $2 from "./routes/admin/_middleware.ts";
-import * as $3 from "./routes/admin/index.tsx";
-import * as $4 from "./routes/api/joke.ts";
-import * as $5 from "./routes/index.tsx";
-import * as $6 from "./routes/login.tsx";
-import * as $7 from "./routes/stats.tsx";
+import * as $3 from "./routes/admin/deleteAll.ts";
+import * as $4 from "./routes/admin/index.tsx";
+import * as $5 from "./routes/api/joke.ts";
+import * as $6 from "./routes/index.tsx";
+import * as $7 from "./routes/login.tsx";
+import * as $8 from "./routes/stats.tsx";
 import * as $$0 from "./islands/CopyButton.tsx";
 import * as $$1 from "./islands/Counter.tsx";
 import * as $$2 from "./islands/CreateLink.tsx";
-import * as $$3 from "./islands/SignIn.tsx";
+import * as $$3 from "./islands/DeleteAll.tsx";
+import * as $$4 from "./islands/SignIn.tsx";
 
 const manifest = {
   routes: {
     "./routes/[shortcode].tsx": $0,
     "./routes/_middleware.ts": $1,
     "./routes/admin/_middleware.ts": $2,
-    "./routes/admin/index.tsx": $3,
-    "./routes/api/joke.ts": $4,
-    "./routes/index.tsx": $5,
-    "./routes/login.tsx": $6,
-    "./routes/stats.tsx": $7,
+    "./routes/admin/deleteAll.ts": $3,
+    "./routes/admin/index.tsx": $4,
+    "./routes/api/joke.ts": $5,
+    "./routes/index.tsx": $6,
+    "./routes/login.tsx": $7,
+    "./routes/stats.tsx": $8,
   },
   islands: {
     "./islands/CopyButton.tsx": $$0,
     "./islands/Counter.tsx": $$1,
     "./islands/CreateLink.tsx": $$2,
-    "./islands/SignIn.tsx": $$3,
+    "./islands/DeleteAll.tsx": $$3,
+    "./islands/SignIn.tsx": $$4,
   },
   baseUrl: import.meta.url,
   config,

@@ -1,4 +1,4 @@
-import { HandlerContext, PageProps } from "$fresh/server.ts";
+import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
 import { asset, Head } from "$fresh/runtime.ts";
 import { getAllLinks } from "../../lib/api.ts";
 import { LinkDatumWithKey } from "../../lib/db.ts";
@@ -7,6 +7,7 @@ import {
   frontendApi,
 } from "../../lib/auth.ts";
 import Header from "../../components/Header.tsx";
+import DeleteAll from "../../islands/DeleteAll.tsx";
 
 interface Data {
   targetUrl: string;
@@ -14,12 +15,14 @@ interface Data {
   links?: LinkDatumWithKey[];
 }
 
-export const handler = async (req: Request, ctx: HandlerContext) => {
-  const { origin: targetUrl } = new URL(req.url);
-  const admin = ctx.state?.admin;
-  const links = await getAllLinks();
-  return ctx.render({admin, links, targetUrl});
-};
+export const handler: Handlers = {
+  async GET(req: Request, ctx: HandlerContext)  {
+    const { origin: targetUrl } = new URL(req.url);
+    const admin = ctx.state?.admin;
+    const links = await getAllLinks();
+    return ctx.render({admin, links, targetUrl});
+  },
+}
 
 export default function Page({ data }: PageProps<Data>) {
   const { admin, targetUrl, links = [] } = data;
@@ -65,7 +68,7 @@ export default function Page({ data }: PageProps<Data>) {
       </div>
     )
   }
-
+  const deletionEndpoint = `${targetUrl}/admin/deleteAll`;
   return (
     <>
       <Head>
@@ -73,9 +76,11 @@ export default function Page({ data }: PageProps<Data>) {
         <link rel="stylesheet" href={asset("/styles/globals.css")} />
       </Head>
       <body>
-      <Header admin={admin} frontendApi={frontendApi} publicKey={publishableKey} />
+        <Header admin={admin} frontendApi={frontendApi} publicKey={publishableKey} />
         <div class="p-4 mx-auto max-w-screen-md">
           { myLinks }
+          <div class="font-bold text-lg md:text-2xl pt-4 pb-2">Admin Actions</div>
+          <DeleteAll dryRun={false} targetUrl={deletionEndpoint}/>
         </div>
       </body>
     </>

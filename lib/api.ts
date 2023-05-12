@@ -94,3 +94,26 @@ export const redirectForShortcode = async (shortcode: string, ip: string) => {
 
     return Response.redirect(original, 302);
 }
+
+export const __unsafe__drop_db = async () => {
+    let count = 0;
+    let collections = 0;
+    for (const k of Object.values(Key)) {
+        if (typeof k !== "string") {
+            continue
+        }
+        console.log(`Fetching collection: ${k}`);
+        collections++;
+        const items = DB.list({ prefix: [k] });
+        for await (const { key } of items) {
+            console.log(`Deleting ${key}`);
+            await DB.delete(key);
+            count++;
+        }
+    }
+    console.log(`Deleted ${count} elements across ${collections} collections`);
+    return {
+        count,
+        collections
+    }
+}
