@@ -14,6 +14,14 @@ const SignInButton = () => {
   );
 }
 
+interface User {
+  id: string;
+}
+
+interface ClerkListenerProps {
+  user?: User;
+}
+
 export default function SignIn(props: SignInProps) {
   const { publicKey, frontendApi, showOnLoad = false} = props;
   const [loggedIn, setLoggedIn] = useState(false);
@@ -30,6 +38,15 @@ export default function SignIn(props: SignInProps) {
       try {
         await Clerk?.load({});
         console.log(`Clerk loaded`);
+        Clerk?.addListener((props: ClerkListenerProps) => {
+          // Display links conditionally based on user state
+          if (props?.user) {
+            console.log(`User: ${props.user.id}`);
+          } else {
+            console.log(`No user or Logged out`);
+            setLoggedIn(false);
+          }
+        });
         if (showOnLoad) {
           const signInButton = document.getElementById("sign-in-button");
           signInButton && window.Clerk?.mountSignIn(signInButton as HTMLDivElement);
