@@ -142,7 +142,7 @@ export default function Page({ data }: PageProps<Data>) {
     const arrow = shortcode ? "→" : null;
     const linkOut = shortcode ? (
       <a href={`${targetUrl}${shortcode}`} target="_blank" className="underline min-w-[42px]">
-        {shortcode}
+        {targetUrl}{shortcode}
       </a>
     ) : null;
     return (
