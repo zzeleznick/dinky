@@ -35,7 +35,6 @@ export async function handler(
   }
   const diff = Math.floor(performance.now() - start);
   console.log(`Request for pathname: '${pathname}' url: ${req.url} took ${diff} ms`);
-  resp.headers.set("X-Dinky", "Linky");
   return resp;
 }
 

@@ -86,3 +86,11 @@ body {
 .label-text-alt {
     color: #aaa;
 }
+
+ol.my-links, ul.my-links {
+    list-style: auto;
+}
+
+.my-links li {
+    margin-left: 1rem;
+}
