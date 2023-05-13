@@ -2,6 +2,7 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 import { useEffect, useState } from "preact/hooks";
 
 interface SignInProps {
+  validAuth?: boolean;
   publicKey: string;
   frontendApi: string;
   path: string;
@@ -31,9 +32,10 @@ export default function SignIn(props: SignInProps) {
     frontendApi,
     path,
     redirectUrl,
+    validAuth = false,
     showOnLoad = false,
   } = props;
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(validAuth);
   const loadClerk = () => {
     console.log(`Clerk load start`);
     const script = document.createElement('script');
@@ -93,8 +95,8 @@ export default function SignIn(props: SignInProps) {
   const context = IS_BROWSER ? 'client' : 'server';
   console.log(`[${context}] SignIn render for path '${path}'`);
   const button = (loggedIn || showOnLoad) ? null : <SignInButton/>
-  const mountedButton = showOnLoad ? <div id="sign-in-button"/> : <div id="user-button"/>
-  const containerExtraClassNames = showOnLoad ? "h-full" : ""
+  const mountedButton = loggedIn ? null : <div id="sign-in-button"/>;
+  const containerExtraClassNames = (!loggedIn && showOnLoad) ? "h-full" : ""
   return (    
     <div class={`flex gap-2 w-full items-center justify-center ${containerExtraClassNames}`}>
       { button }

@@ -94,3 +94,7 @@ ol.my-links, ul.my-links {
 .my-links li {
     margin-left: 1rem;
 }
+
+#user-button:has(div:nth-of-type(2)) > div:nth-child(1) {
+    display: none;
+}

@@ -9,20 +9,12 @@ import {
 } from "../lib/auth.ts";
 
 import {
-  LinkDatum,
-} from "../lib/db.ts";
-
-import {
   DuplicateShortcodeError,
   shortcodeForUrl,
   getLinksForUser,
 } from "../lib/api.ts";
 
-interface Data {
-  targetUrl: string;
-  admin?: boolean;
-  links?: LinkDatum[];
-}
+import { CtxData, extractDataFromCtx, } from "../lib/handler.ts";
 
 const Decoder = new TextDecoder();
 const exampleLink = 'https://jsonplaceholder.typicode.com/todos/1';
@@ -57,13 +49,12 @@ const extractLink = (body: string) => {
 export const handler: Handlers = {
   async GET(req: Request, ctx: HandlerContext)  {
     const { href: targetUrl } = new URL(req.url);
-    const user = ctx.state?.user as string;
-    const admin = ctx.state?.admin;
+    const {user, admin, avatar} = extractDataFromCtx(ctx);
     let links = [];
     if (user) {
       links = await getLinksForUser(user);
     }
-    return ctx.render({admin, targetUrl, links});
+    return ctx.render({admin, avatar, user, targetUrl, links});
   },
   async POST(req: Request, ctx: HandlerContext)  {
     const { hostname: remoteIp } = ctx.remoteAddr as Deno.NetAddr;
@@ -93,8 +84,14 @@ export const handler: Handlers = {
   },
 };
 
-export default function Page({ data }: PageProps<Data>) {
-  const { admin, targetUrl, links = [] } = data;
+export default function Page({ data }: PageProps<CtxData>) {
+  const {
+    admin,
+    avatar,
+    user,
+    targetUrl,
+    links = []
+  } = data;
   const text = `curl -d '{"link": "${exampleLink}"}' ${targetUrl.replace(/\/+$/g, '')}`
   const codeBlock = (
     <div>
@@ -148,7 +145,7 @@ export default function Page({ data }: PageProps<Data>) {
         <link rel="stylesheet" href={asset("/styles/globals.css")} />
       </Head>
       <body>
-        <Header admin={admin} frontendApi={frontendApi} publicKey={publishableKey} />
+        <Header admin={admin} avatar={avatar} user={user} frontendApi={frontendApi} publicKey={publishableKey} />
         <div class="p-4 mx-auto max-w-screen-md">
           <img
             src="/logo.svg"

@@ -78,6 +78,10 @@ export const getCookie = (req: Request, name = "__session") => {
   return decodeURIComponent(cookie);
 }
 
+type CustomJwt = {
+  avatar?: string;
+} & jose.JWTPayload; 
+
 export const jwtVerify = async (jwt: string) => {
   const publicKey = await jose.importJWK(LocalWellKnownKeys?.[0], "RS256");
   if (!jwt) {
@@ -87,7 +91,7 @@ export const jwtVerify = async (jwt: string) => {
     const decoded = await jose.jwtVerify(jwt, publicKey, {});
     const { payload } = decoded;
     console.log(`Payload: ${JSON.stringify(payload)}`);
-    return payload;
+    return payload as CustomJwt;
   } catch (err) {
     if ((err as JWTClaimValidationFailed).code == "ERR_JWT_EXPIRED") {
       console.warn(`warn: JWT is expired`);
@@ -105,6 +109,7 @@ export const jwtVerify = async (jwt: string) => {
 export interface CtxWithAuth {
   user?: string;
   admin?: boolean;
+  avatar?: string;
 }
 
 const isAdmin = (user?: string) => {
@@ -119,7 +124,8 @@ export const addUserToReqCtx = async (
   let user: undefined | string;
   try {
     const payload = await jwtVerify(jwt);
-    user = payload.sub
+    user = payload.sub;
+    ctx.state.avatar = payload?.avatar;
   } catch (err) {
     if (err instanceof EmptyTokenError) {
       // pass
