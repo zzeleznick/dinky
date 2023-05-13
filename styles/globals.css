@@ -95,6 +95,11 @@ ol.my-links, ul.my-links {
     margin-left: 1rem;
 }
 
+/* NOTE: Hide the ssr user avatar once the dynamic one loads */
 #user-button:has(div:nth-of-type(2)) > div:nth-child(1) {
+    display: none;
+}
+
+#auth-bar:has(#sign-in-button) #ssr-user-avatar {
     display: none;
 }

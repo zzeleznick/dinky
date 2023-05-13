@@ -17,9 +17,8 @@ const Header = (props: HeaderProps) => {
     publicKey,
     frontendApi,
   } = props;
-  const validAuth = admin || user;
+  const validAuth = Boolean(admin || user);
   const adminLink = admin ? <div><a href="/admin"> Admin </a></div> : null;
-  const avatarElement = validAuth ? <UserAvatar src={avatar} /> : null;
   return (
     <div className="flex z-[100] sticky inset-0 bg-purple-400 min-h-[64px]">
       <div className="flex flex-row w-full font-bold px-2 md:px-4 gap-x-4 py-2 md:py-4 justify-between">
@@ -28,8 +27,8 @@ const Header = (props: HeaderProps) => {
           <div><a href="/"> Home </a></div> 
           { adminLink }
         </div>
-        <div className="flex flex-row px-2 md:px-4 gap-x-4 md:gap-x-8 justify-between">
-          { avatarElement }
+        <div id="auth-bar" className="flex flex-row px-2 md:px-4 gap-x-4 md:gap-x-8 justify-between">
+          <UserAvatar showServerAvatar={validAuth} src={avatar} />
           <SignIn validAuth={validAuth} path='/' publicKey={publicKey} frontendApi={frontendApi}/>
         </div>
       </div>
