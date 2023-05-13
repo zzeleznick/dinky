@@ -6,12 +6,14 @@ import type { LinkDatum } from "../lib/db.ts";
 
 interface DynamicLinkListProps {
   targetUrl: string;
+  title?: string;
   links?: LinkDatum[];
 }
 
 const DynamicLinkList = (props: DynamicLinkListProps) => {
   const {
     targetUrl,
+    title,
     links = [],
   } = props;
   
@@ -36,7 +38,7 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
     <div class="flex pt-12 items-center justify-center">
       <CreateLink onSubmit={onSubmit} targetUrl={targetUrl}/>
     </div>
-    <LinkList targetUrl={targetUrl} links={allLinks} />
+    <LinkList title={title} targetUrl={targetUrl} links={allLinks} />
     </>
   )
 }

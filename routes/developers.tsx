@@ -2,6 +2,7 @@ import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
 import { asset, Head } from "$fresh/runtime.ts";
 import Header from "../components/Header.tsx";
 import CodeBlock from "../components/CodeBlock.tsx";
+import LinkList from "../components/LinkList.tsx";
 import {
   publishableKey,
   frontendApi,
@@ -36,41 +37,7 @@ export default function Page({ data }: PageProps<CtxData>) {
     links = []
   } = data;
   const text = `curl -d '{"link": "${exampleLink}"}' ${targetUrl.replace(/\/+$/g, '')}`;
-  const linkList = links.map((v, i) => {
-    const {
-      shortcode,
-      value: href,
-    } = v
-    const arrow = shortcode ? "→" : null;
-    const linkOut = shortcode ? (
-      <a href={`${targetUrl}${shortcode}`} target="_blank" className="underline min-w-[42px]">
-        {targetUrl}{shortcode}
-      </a>
-    ) : null;
-    return (
-      <li class="flex flex-row gap-2" key={i}>
-        <span className="min-w-[20px]">{i+1}{"."}</span>
-        <a href={href} target="_blank">
-          {href}
-        </a>
-        { arrow }
-        { linkOut }
-      </li>
-    );
-  })
-
-  let myLinks = null;
-  if (linkList.length) {
-    myLinks = (
-      <div class="flex flex-col">
-        <div class="text-lg pb-2">My Links</div>
-        <ol class="my-links">
-          { linkList }
-        </ol>
-      </div>
-    )
-  }
-
+  
   return (
     <>
       <Head>
@@ -91,7 +58,7 @@ export default function Page({ data }: PageProps<CtxData>) {
             <CodeBlock text={text}/>
             <div>to get started</div>
           </div>
-          { myLinks }
+          <LinkList targetUrl={targetUrl} links={links} />
         </div>
       </body>
     </>

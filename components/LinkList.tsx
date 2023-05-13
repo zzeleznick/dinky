@@ -2,17 +2,19 @@ import type { LinkDatum } from "../lib/db.ts";
 
 interface LinkListProps {
   targetUrl: string;
+  title?: string;
   links?: LinkDatum[];
 }
+
+const defaultTitle = "My Links";
 
 const LinkList = (props: LinkListProps) => {
   const {
     targetUrl,
-    links,
+    title = defaultTitle,
+    links = [],
   } = props;
-  if (!(links && links.length)) {
-    return null
-  }
+
   const linkList = links.map((v, i) => {
     const {
       shortcode,
@@ -35,12 +37,9 @@ const LinkList = (props: LinkListProps) => {
       </li>
     );
   })
-  if (!linkList.length) {
-    return null
-  }
   return (
     <div class="flex flex-col pt-4">
-      <div class="text-lg pb-2">My Links</div>
+      <div class="text-xl md:text-2xl font-bold pb-2">{title}</div>
       <ol class="my-links">
         {linkList}
       </ol>
