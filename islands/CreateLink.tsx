@@ -1,7 +1,8 @@
-import { useState, useRef, useEffect } from "preact/hooks";
+import { useState, useEffect } from "preact/hooks";
 import { createShortcodeResponse } from "../lib/api.ts";
 
 interface LinkInputProps {
+  clearInput?: boolean;
   onLinkValidation?: (valid: boolean | URL) => void;
 }
 
@@ -35,6 +36,10 @@ const submitUrl = async (endpoint: string, link: boolean | URL) => {
 }
 
 const LinkInput = (props: LinkInputProps) => {
+  const {
+    clearInput,
+    onLinkValidation,
+  } = props;
   const [link, setLink] = useState('');
   const [validationText, setValidationText] = useState('');
 
@@ -46,15 +51,21 @@ const LinkInput = (props: LinkInputProps) => {
     }
   }
 
+  useEffect(() => { 
+    if (clearInput) {
+      setLink("");
+    }
+  }, [clearInput])
+
   useEffect(() => {
     const valid = validateUrl(link);
-    if (valid) {
+    if (valid || !link) {
       setValidationText("");
     } else {
       setValidationText("Please enter a valid url");
     }
-    if (props.onLinkValidation) {
-      props.onLinkValidation(valid);
+    if (onLinkValidation) {
+      onLinkValidation(valid);
     }
   }, [link]);
 
@@ -76,6 +87,7 @@ const LinkInput = (props: LinkInputProps) => {
 
 export default function CreateLink(props: CreateLinkProps) {
   const [validLink, setLinkValid] = useState<boolean | URL>(false);
+  const [clearInput, setClearInput] = useState(false);
   const {
     targetUrl,
     onSubmit,
@@ -84,8 +96,11 @@ export default function CreateLink(props: CreateLinkProps) {
   return (
     <>
       <div class="flex flex-col w-full pb-4">
-        <LinkInput onLinkValidation={(valid) => {
-          setLinkValid(valid);
+        <p>{clearInput}</p>
+        <LinkInput
+          clearInput={clearInput}
+          onLinkValidation={(valid) => {
+            setLinkValid(valid);
         }} />
         <div class="flex w-full justify-start">
           <button class={`px-2 py-1 border(gray-100 2) ${buttonClassnames}`}
@@ -96,6 +111,7 @@ export default function CreateLink(props: CreateLinkProps) {
               console.log(`CreateLink submitUrl resp: ${JSON.stringify(resp)}`);
               if (resp && onSubmit) {
                 onSubmit(resp);
+                setClearInput(true);
               }
             }}>
             Submit
