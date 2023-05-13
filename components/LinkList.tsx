@@ -1,16 +1,21 @@
+import { Signal } from "@preact/signals-core";
 import type { LinkDatum } from "../lib/db.ts";
 
 interface LinkListProps {
   targetUrl: string;
-  links?: LinkDatum[];
+  links?: Signal<LinkDatum[]>;
 }
 
 const LinkList = (props: LinkListProps) => {
   const {
     targetUrl,
-    links = [],
+    links,
   } = props;
-  const linkList = links.map((v, i) => {
+  const val = links?.value;
+  if (!(val && val.length)) {
+    return null
+  }
+  const linkList = val.map((v, i) => {
     const {
       shortcode,
       value: href,

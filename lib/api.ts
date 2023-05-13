@@ -18,6 +18,12 @@ export class InvalidShortcode extends BaseError {
     }
 }
 
+export interface createShortcodeResponse {
+    original: string;
+    shortcode: string;
+    fullUrl: string;
+}
+
 export const extractLink = (body: string) => {
     let link = '';
     console.log(`User posted: '${body}'`);
@@ -76,7 +82,7 @@ export const shortcodeForUrl = async (targetUrl: URL, srcUrl: URL, user: string)
         original: href,
         shortcode,
         fullUrl,
-    }
+    } as createShortcodeResponse
 }
 
 export const getLinksWithKeys = async (keys: string[]) => {

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "preact/hooks";
+import { createShortcodeResponse } from "../lib/api.ts";
 
 interface LinkInputProps {
   onLinkValidation?: (valid: boolean | URL) => void;
@@ -6,6 +7,7 @@ interface LinkInputProps {
 
 interface CreateLinkProps {
   targetUrl: string;
+  onSubmit?: (resp: createShortcodeResponse) => void;
 }
 
 const submitUrl = async (endpoint: string, link: boolean | URL) => {
@@ -17,17 +19,16 @@ const submitUrl = async (endpoint: string, link: boolean | URL) => {
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({link}),
+      body: JSON.stringify({ link }),
     });
-    if(!response) {
+    if (!response) {
       console.error(`Empty response for url: ${endpoint}!`)
       return
     }
     if (!response.ok) {
       console.warn(`Unhealthy response for url: ${endpoint}!`)
     }
-    const data = await Promise.resolve(response.clone().json().catch(() => response.text()));
-    console.log(`data: ${JSON.stringify(data)}`);
+    return await response.json() as createShortcodeResponse
   } catch (err) {
     console.error(`Failed to post for link: ${link}`, err);
   }
@@ -41,7 +42,7 @@ const LinkInput = (props: LinkInputProps) => {
   const validateUrl = (url: string) => {
     try {
       return new URL(url)
-    } catch(err) {
+    } catch (err) {
       return false
     }
   }
@@ -49,7 +50,7 @@ const LinkInput = (props: LinkInputProps) => {
   useEffect(() => {
     const now = performance.now();
     const diff = Math.floor(now - startCheck.current);
-    if ( diff > 100) {
+    if (diff > 100) {
       const valid = validateUrl(link);
       if (valid) {
         setValidationText("");
@@ -65,59 +66,49 @@ const LinkInput = (props: LinkInputProps) => {
   }, [link]);
 
   return (
-    <div className="form-control w-full font-normal max-w-xs">
-    <label className="label">
-      <span className="label-text font-xs pb-2">Link</span>
-    </label>
-    <input type="url" name="url" placeholder="https://jsonplaceholder.typicode.com/todos/1"
-      className={`input input-bordered w-full h-12 px-2 max-w-xs`}
-      value={link} onInput={e => setLink(e.target?.value || '')}
-    />
-    <label className="label pt-2 min-h-[42px]">
-      <span className="label-text-alt font-xs pb-2">{validationText}{" "}</span>
-    </label>
-  </div>
+    <div className="form-control w-full font-normal max-w-sm">
+      <label className="label">
+        <span className="label-text font-xs pb-2">Enter your link to be Dinkified</span>
+      </label>
+      <input type="url" name="url" placeholder="https://jsonplaceholder.typicode.com/todos/1"
+        className={`input input-bordered w-full h-12 px-2 max-w-sm`}
+        value={link} onInput={e => setLink((e.target as HTMLInputElement)?.value || '')}
+      />
+      <label className="label pt-2 min-h-[42px]">
+        <span className="label-text-alt font-xs pb-2">{validationText}{" "}</span>
+      </label>
+    </div>
   )
 }
 
 export default function CreateLink(props: CreateLinkProps) {
-  const [validLink, setLinkValid] = useState<boolean|URL>(false);
+  const [validLink, setLinkValid] = useState<boolean | URL>(false);
   const {
     targetUrl,
+    onSubmit,
   } = props;
-  const modalId = 'open-modal'
   const buttonClassnames = validLink ? "hover:bg-gray-200" : "hover:cursor-not-allowed";
-  const submitClassname = validLink ? "" : "hover:cursor-not-allowed pointer-events-none";
   return (
     <>
-    <div class="flex">
-      <div class="interior">
-        <div class="px-2 py-1 border(gray-100 2) hover:bg-gray-200">
-          <a href={`#${modalId}`}>Create a Link</a>
-        </div>
-      </div>
-    </div>
-    <div id={modalId} class="modal-window inset-0">
-      <div>
-        <a href="#" title="Close" class="modal-close">Close</a>
-        <h1>Dinky Linky</h1>
+      <div class="flex flex-col w-full pb-4">
         <LinkInput onLinkValidation={(valid) => {
-          // console.log(`CreateLink.onLinkValidation -> ${valid}`);
           setLinkValid(valid);
-        }}/>
-        <div class="flex w-full justify-end">
-        <button class={`px-2 py-1 border(gray-100 2) ${buttonClassnames}`}
-          disabled={!validLink}
-          onClick={async () => {
-            console.log(`Going to submit!`);
-            await submitUrl(targetUrl, validLink);
-            console.log(`Submitted!`);
-          }}>
-          <a class={submitClassname} href="#"> Submit </a>
-        </button>
+        }} />
+        <div class="flex w-full justify-start">
+          <button class={`px-2 py-1 border(gray-100 2) ${buttonClassnames}`}
+            disabled={!validLink}
+            onClick={async () => {
+              console.log(`Going to submit!`);
+              const resp = await submitUrl(targetUrl, validLink);
+              console.log(`CreateLink submitUrl resp: ${JSON.stringify(resp)}`);
+              if (resp && onSubmit) {
+                onSubmit(resp);
+              }
+            }}>
+            Submit
+          </button>
         </div>
       </div>
-    </div>
     </>
   )
 

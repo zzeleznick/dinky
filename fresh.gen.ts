@@ -17,7 +17,8 @@ import * as $$0 from "./islands/CopyButton.tsx";
 import * as $$1 from "./islands/Counter.tsx";
 import * as $$2 from "./islands/CreateLink.tsx";
 import * as $$3 from "./islands/DeleteAll.tsx";
-import * as $$4 from "./islands/SignIn.tsx";
+import * as $$4 from "./islands/DynamicLinkList.tsx";
+import * as $$5 from "./islands/SignIn.tsx";
 
 const manifest = {
   routes: {
@@ -37,7 +38,8 @@ const manifest = {
     "./islands/Counter.tsx": $$1,
     "./islands/CreateLink.tsx": $$2,
     "./islands/DeleteAll.tsx": $$3,
-    "./islands/SignIn.tsx": $$4,
+    "./islands/DynamicLinkList.tsx": $$4,
+    "./islands/SignIn.tsx": $$5,
   },
   baseUrl: import.meta.url,
   config,

@@ -1,8 +1,7 @@
 import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
 import { asset, Head } from "$fresh/runtime.ts";
 import Header from "../components/Header.tsx";
-import LinkList from "../components/LinkList.tsx";
-import CreateLink from "../islands/CreateLink.tsx";
+import DynamicLinkList from "../islands/DynamicLinkList.tsx";
 import {
   publishableKey,
   frontendApi,
@@ -65,7 +64,6 @@ export default function Page({ data }: PageProps<CtxData>) {
     targetUrl,
     links = []
   } = data;
-
   return (
     <>
       <Head>
@@ -81,10 +79,7 @@ export default function Page({ data }: PageProps<CtxData>) {
             alt="the fresh logo: a sliced lemon dripping with juice"
           />
           <h1 class="text-xl md:text-2xl font-bold">Dinky Linky</h1>
-          <div class="flex items-center justify-center h-8">
-            <CreateLink targetUrl={targetUrl}/>
-          </div>
-          <LinkList targetUrl={targetUrl} links={links} />
+          <DynamicLinkList targetUrl={targetUrl} links={links} />
         </div>
       </body>
     </>
