@@ -1,4 +1,4 @@
-import { signal } from "@preact/signals-core";
+import { useState } from "preact/hooks";
 import CreateLink from "./CreateLink.tsx";
 import LinkList from "../components/LinkList.tsx";
 import { createShortcodeResponse } from "../lib/api.ts";
@@ -15,7 +15,7 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
     links = [],
   } = props;
   
-  const allLinks = signal(links);
+  const [allLinks, setLinks] = useState(links);
 
   const onSubmit = (resp: createShortcodeResponse) => {
     console.log(`DynamicLinkList onSubmit resp: ${JSON.stringify(resp)}`);
@@ -29,7 +29,7 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
       user: '',
       createdTs: 0,
     }
-    allLinks.value = [...allLinks.value, {...renderableLink}];
+    setLinks([...allLinks, {...renderableLink}]);
   }
   return (
     <>

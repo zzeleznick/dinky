@@ -37,7 +37,6 @@ const submitUrl = async (endpoint: string, link: boolean | URL) => {
 const LinkInput = (props: LinkInputProps) => {
   const [link, setLink] = useState('');
   const [validationText, setValidationText] = useState('');
-  const startCheck = useRef(performance.now());
 
   const validateUrl = (url: string) => {
     try {
@@ -48,21 +47,15 @@ const LinkInput = (props: LinkInputProps) => {
   }
 
   useEffect(() => {
-    const now = performance.now();
-    const diff = Math.floor(now - startCheck.current);
-    if (diff > 100) {
-      const valid = validateUrl(link);
-      if (valid) {
-        setValidationText("");
-      } else {
-        setValidationText("Please enter a valid url");
-      }
-      if (props.onLinkValidation) {
-        // console.log(`LinkInput.onLinkValidation (${diff}) -> ${valid}`);
-        props.onLinkValidation(valid);
-      }
+    const valid = validateUrl(link);
+    if (valid) {
+      setValidationText("");
+    } else {
+      setValidationText("Please enter a valid url");
     }
-    startCheck.current = now;
+    if (props.onLinkValidation) {
+      props.onLinkValidation(valid);
+    }
   }, [link]);
 
   return (
@@ -98,7 +91,7 @@ export default function CreateLink(props: CreateLinkProps) {
           <button class={`px-2 py-1 border(gray-100 2) ${buttonClassnames}`}
             disabled={!validLink}
             onClick={async () => {
-              console.log(`Going to submit!`);
+              console.log(`Going to submit '${validLink}'!`);
               const resp = await submitUrl(targetUrl, validLink);
               console.log(`CreateLink submitUrl resp: ${JSON.stringify(resp)}`);
               if (resp && onSubmit) {
