@@ -1,6 +1,7 @@
 import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
 import { asset, Head } from "$fresh/runtime.ts";
 import Header from "../components/Header.tsx";
+import LinkList from "../components/LinkList.tsx";
 import CreateLink from "../islands/CreateLink.tsx";
 import {
   publishableKey,
@@ -9,6 +10,7 @@ import {
 
 import {
   DuplicateShortcodeError,
+  extractLink,
   shortcodeForUrl,
   getLinksForUser,
 } from "../lib/api.ts";
@@ -16,33 +18,6 @@ import {
 import { CtxData, extractDataFromCtx, } from "../lib/handler.ts";
 
 const Decoder = new TextDecoder();
-
-const extractLink = (body: string) => {
-  let link = '';
-  console.log(`User posted: '${body}'`);
-  try {
-    const data = JSON.parse(body);
-    link = data.link;
-  } catch (err) {
-    console.error(`JSON parse error: ${err}`);
-    return; 
-  }
-
-  link = `${link.toString().trim()}`
-  if (!link) {
-    console.warn(`No link!`);
-    return; 
-  }
-
-  let targetUrl: URL;
-  try {
-    targetUrl = new URL(link);
-    return targetUrl
-  } catch (err) {
-    console.error(`URL parse error: ${err}`);
-    return;
-  }
-}
 
 export const handler: Handlers = {
   async GET(req: Request, ctx: HandlerContext)  {
@@ -91,41 +66,6 @@ export default function Page({ data }: PageProps<CtxData>) {
     links = []
   } = data;
 
-  const linkList = links.map((v, i) => {
-    const {
-      shortcode,
-      value: href,
-    } = v
-    const arrow = shortcode ? "→" : null;
-    const linkOut = shortcode ? (
-      <a href={`${targetUrl}${shortcode}`} target="_blank" className="underline min-w-[42px]">
-        {targetUrl}{shortcode}
-      </a>
-    ) : null;
-    return (
-      <li class="flex flex-row gap-2" key={i}>
-        <span className="min-w-[20px]">{i+1}{"."}</span>
-        <a href={href} target="_blank">
-          {href}
-        </a>
-        { arrow }
-        { linkOut }
-      </li>
-    );
-  })
-
-  let myLinks = null;
-  if (linkList.length) {
-    myLinks = (
-      <div class="flex flex-col">
-        <div class="text-lg pb-2">My Links</div>
-        <ol class="my-links">
-          { linkList }
-        </ol>
-      </div>
-    )
-  }
-
   return (
     <>
       <Head>
@@ -144,7 +84,7 @@ export default function Page({ data }: PageProps<CtxData>) {
           <div class="flex items-center justify-center h-8">
             <CreateLink targetUrl={targetUrl}/>
           </div>
-          { myLinks }
+          <LinkList targetUrl={targetUrl} links={links} />
         </div>
       </body>
     </>

@@ -18,6 +18,34 @@ export class InvalidShortcode extends BaseError {
     }
 }
 
+export const extractLink = (body: string) => {
+    let link = '';
+    console.log(`User posted: '${body}'`);
+    try {
+        const data = JSON.parse(body);
+        link = data.link;
+    } catch (err) {
+        console.error(`JSON parse error: ${err}`);
+        return;
+    }
+
+    link = `${link.toString().trim()}`
+    if (!link) {
+        console.warn(`No link in request body!`);
+        return;
+    }
+
+    let targetUrl: URL;
+    try {
+        targetUrl = new URL(link);
+        return targetUrl
+    } catch (err) {
+        console.error(`URL parse error: ${err}`);
+        return;
+    }
+}
+
+
 export const shortcodeForUrl = async (targetUrl: URL, srcUrl: URL, user: string) => {
     const { href, hostname: targetHostname } = targetUrl;
     const shortcode = randomString();
