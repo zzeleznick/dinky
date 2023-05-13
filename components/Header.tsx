@@ -24,7 +24,8 @@ const Header = (props: HeaderProps) => {
       <div className="flex flex-row w-full font-bold px-2 md:px-4 gap-x-4 py-2 md:py-4 justify-between">
         <div className="flex flex-row items-center px-4 md:px-8 gap-x-8 md:gap-x-12">
           <div>{/* Empty for space */}</div>
-          <div><a href="/"> Home </a></div> 
+          <div><a href="/"> Home </a></div>
+          <div><a href="/developers"> Developers </a></div> 
           { adminLink }
         </div>
         <div id="auth-bar" className="flex flex-row px-2 md:px-4 gap-x-4 md:gap-x-8 justify-between">

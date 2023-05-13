@@ -1,48 +1,19 @@
 import { Handlers, HandlerContext, PageProps } from "$fresh/server.ts";
 import { asset, Head } from "$fresh/runtime.ts";
 import Header from "../components/Header.tsx";
-import CreateLink from "../islands/CreateLink.tsx";
+import CodeBlock from "../components/CodeBlock.tsx";
 import {
   publishableKey,
   frontendApi,
 } from "../lib/auth.ts";
 
 import {
-  DuplicateShortcodeError,
-  shortcodeForUrl,
   getLinksForUser,
 } from "../lib/api.ts";
 
 import { CtxData, extractDataFromCtx, } from "../lib/handler.ts";
 
-const Decoder = new TextDecoder();
-
-const extractLink = (body: string) => {
-  let link = '';
-  console.log(`User posted: '${body}'`);
-  try {
-    const data = JSON.parse(body);
-    link = data.link;
-  } catch (err) {
-    console.error(`JSON parse error: ${err}`);
-    return; 
-  }
-
-  link = `${link.toString().trim()}`
-  if (!link) {
-    console.warn(`No link!`);
-    return; 
-  }
-
-  let targetUrl: URL;
-  try {
-    targetUrl = new URL(link);
-    return targetUrl
-  } catch (err) {
-    console.error(`URL parse error: ${err}`);
-    return;
-  }
-}
+const exampleLink = 'https://jsonplaceholder.typicode.com/todos/1';
 
 export const handler: Handlers = {
   async GET(req: Request, ctx: HandlerContext)  {
@@ -54,32 +25,6 @@ export const handler: Handlers = {
     }
     return ctx.render({admin, avatar, user, targetUrl, links});
   },
-  async POST(req: Request, ctx: HandlerContext)  {
-    const { hostname: remoteIp } = ctx.remoteAddr as Deno.NetAddr;
-    const user = (ctx.state?.user as string) || remoteIp;
-    const srcUrl = new URL(req.url);
-    const buf = await req.arrayBuffer();
-    const body = Decoder.decode(buf);
-    const link = extractLink(body);
-    if (!link) {
-      return new Response('Malformed Request', { status: 400 });
-    }
-    try {
-      const resp = await shortcodeForUrl(link, srcUrl, user);
-      return new Response(JSON.stringify(resp), {
-        status: 200,
-        headers: {
-          "content-type": "application/json",
-        },
-      });
-    } catch (err) {
-        if (err instanceof DuplicateShortcodeError) {
-          return new Response(`Duplicate Shortcode Error!`, { status: 500 });
-        }
-      console.error(`Unexpected error: ${err}`);
-      return new Response(`An unexpected error has occurred :(`, { status: 500 });
-    }
-  },
 };
 
 export default function Page({ data }: PageProps<CtxData>) {
@@ -90,7 +35,7 @@ export default function Page({ data }: PageProps<CtxData>) {
     targetUrl,
     links = []
   } = data;
-
+  const text = `curl -d '{"link": "${exampleLink}"}' ${targetUrl.replace(/\/+$/g, '')}`;
   const linkList = links.map((v, i) => {
     const {
       shortcode,
@@ -141,8 +86,10 @@ export default function Page({ data }: PageProps<CtxData>) {
             alt="the fresh logo: a sliced lemon dripping with juice"
           />
           <h1 class="text-xl md:text-2xl font-bold">Dinky Linky</h1>
-          <div class="flex items-center justify-center h-8">
-            <CreateLink targetUrl={targetUrl}/>
+          <div class="py-6 flex flex-col gap-8">
+            <div>Try running</div>
+            <CodeBlock text={text}/>
+            <div>to get started</div>
           </div>
           { myLinks }
         </div>

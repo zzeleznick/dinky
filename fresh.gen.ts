@@ -9,9 +9,10 @@ import * as $2 from "./routes/admin/_middleware.ts";
 import * as $3 from "./routes/admin/deleteAll.ts";
 import * as $4 from "./routes/admin/index.tsx";
 import * as $5 from "./routes/api/joke.ts";
-import * as $6 from "./routes/index.tsx";
-import * as $7 from "./routes/login.tsx";
-import * as $8 from "./routes/stats.tsx";
+import * as $6 from "./routes/developers.tsx";
+import * as $7 from "./routes/index.tsx";
+import * as $8 from "./routes/login.tsx";
+import * as $9 from "./routes/stats.tsx";
 import * as $$0 from "./islands/CopyButton.tsx";
 import * as $$1 from "./islands/Counter.tsx";
 import * as $$2 from "./islands/CreateLink.tsx";
@@ -26,9 +27,10 @@ const manifest = {
     "./routes/admin/deleteAll.ts": $3,
     "./routes/admin/index.tsx": $4,
     "./routes/api/joke.ts": $5,
-    "./routes/index.tsx": $6,
-    "./routes/login.tsx": $7,
-    "./routes/stats.tsx": $8,
+    "./routes/developers.tsx": $6,
+    "./routes/index.tsx": $7,
+    "./routes/login.tsx": $8,
+    "./routes/stats.tsx": $9,
   },
   islands: {
     "./islands/CopyButton.tsx": $$0,
