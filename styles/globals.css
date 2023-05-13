@@ -61,7 +61,7 @@
     color: black;
 }
 
-body {
+html, body {
     overscroll-behavior: none;
 }
 

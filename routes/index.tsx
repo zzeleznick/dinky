@@ -72,7 +72,7 @@ export default function Page({ data }: PageProps<CtxData>) {
       </Head>
       <body>
         <Header admin={admin} avatar={avatar} user={user} frontendApi={frontendApi} publicKey={publishableKey} />
-        <div class="p-4 mx-auto max-w-screen-md">
+        <div class="p-4 mx-auto min-w-[320px] max-w-screen-md">
           <img
             src="/logo.svg"
             class="w-32 h-32"

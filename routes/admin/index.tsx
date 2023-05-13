@@ -31,7 +31,7 @@ export default function Page({ data }: PageProps<CtxData>) {
       </Head>
       <body>
         <Header admin={admin} avatar={avatar} frontendApi={frontendApi} publicKey={publishableKey} />
-        <div class="p-4 mx-auto max-w-screen-md">
+        <div class="p-4 mx-auto min-w-[320px] max-w-screen-md">
           <LinkList title={"All Links"} targetUrl={targetUrl} links={links} />
           <div class="font-bold text-lg md:text-2xl pt-12 pb-2">
             Admin Actions

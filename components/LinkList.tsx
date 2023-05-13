@@ -20,27 +20,28 @@ const LinkList = (props: LinkListProps) => {
       shortcode,
       value: href,
     } = v
-    const arrow = shortcode ? "→" : null;
-    const linkOut = shortcode ? (
-      <a href={`${targetUrl}${shortcode}`} target="_blank" className="underline min-w-[42px]">
-        {targetUrl}{shortcode}
-      </a>
-    ) : null;
+    const linkout = `${targetUrl}${shortcode}`
     return (
-      <li class="flex flex-row gap-2" key={i}>
-        <span className="min-w-[20px]">{i + 1}{"."}</span>
-        <a href={href} target="_blank" class="truncate overflow-hidden whitespace-nowrap px-1 min-w-[0]">
-          {href}
-        </a>
-        {arrow}
-        {linkOut}
+      <li class="flex flex-row flex-wrap gap-2 max-w-[100%]" key={i}>
+        <div class="flex-wrap truncate overflow-hidden whitespace-nowrap">
+          <span className="min-w-[24px] pr-2">{i + 1}{"."}</span>
+          <a href={href} target="_blank" class="px-1 min-w-[0]">
+            {href}
+          </a>
+        </div>
+        <div class="flex-wrap truncate overflow-hidden whitespace-nowrap">
+          <span className="min-w-[24px] pr-1">{"→"}</span>
+          <a href={linkout} target="_blank" class="underline px-1 min-w-[0]">
+            {linkout}
+          </a>
+        </div>
       </li>
     );
   })
   return (
     <div class="flex flex-col pt-4">
-      <div class="text-xl md:text-2xl font-bold pb-2">{title}</div>
-      <ol class="my-links">
+      <div class="text-xl md:text-2xl font-bold pb-6">{title}</div>
+      <ol class="my-links flex flex-col gap-y-4">
         {linkList}
       </ol>
     </div>

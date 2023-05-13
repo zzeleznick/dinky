@@ -13,13 +13,13 @@ const UserAvatar = (props: UserAvatarProps) => {
       <img
           src={src}
           crossOrigin="anonymous"
-          class="min-w-[32px] max-w-[32px] h-full aspect-square"
+          class="min-w-[32px] max-w-[32px] min-h-[32px] max-h-[32px] aspect-square"
           alt="User Avatar"
       />
     </div>
   ) : null
   return (
-    <div class="min-h-[34px]">
+    <div class="min-h-[34px] max-h-[34px]">
       <div id="user-button">
         { ssrAvatar }
       </div>
