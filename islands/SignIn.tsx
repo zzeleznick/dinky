@@ -47,9 +47,10 @@ export default function SignIn(props: SignInProps) {
     script.addEventListener('load', async function() {
       const Clerk = window.Clerk;
       try {
-        await Clerk?.load({
-          afterSignInUrl: redirectUrl,
-        });
+        await Clerk?.load({});
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+        }
         console.log(`Clerk loaded`);
         Clerk?.addListener((props: ClerkListenerProps) => {
           // Display links conditionally based on user state
@@ -64,8 +65,6 @@ export default function SignIn(props: SignInProps) {
           const signInButton = document.getElementById("sign-in-button");
           signInButton && window.Clerk?.mountSignIn(signInButton as HTMLDivElement, {
             path,
-            routing: "path",
-            afterSignInUrl: redirectUrl,
             redirectUrl,
           });
           return
@@ -85,7 +84,6 @@ export default function SignIn(props: SignInProps) {
       }
     });
     document.body.appendChild(script);
-    console.log(`Script added`);
   }
 
   useEffect(() => {

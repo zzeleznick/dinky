@@ -1,6 +1,7 @@
 # misc
 .DS_Store
 /.vscode/
+/.unlighthouse/
 *.pem
 
 # debug
