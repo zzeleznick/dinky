@@ -3,6 +3,8 @@ import CreateLink from "./CreateLink.tsx";
 import LinkList from "../components/LinkList.tsx";
 import { createShortcodeResponse } from "../lib/api.ts";
 import type { LinkDatum } from "../lib/db.ts";
+import { useStore } from '@nanostores/preact';
+import { isLoggedInFactory } from '../components/Store.ts';
 
 interface DynamicLinkListProps {
   targetUrl: string;
@@ -18,6 +20,8 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
   } = props;
 
   const [allLinks, setLinks] = useState(links);
+  const isLoggedIn = isLoggedInFactory(false)
+  const $loggedIn = useStore(isLoggedIn);
 
   const onSubmit = (resp: createShortcodeResponse) => {
     console.log(`DynamicLinkList onSubmit resp: ${JSON.stringify(resp)}`);
@@ -35,6 +39,7 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
   };
   return (
     <>
+      <> { $loggedIn ? 'Logged In' : 'Not Logged In'} </>
       <div class="flex pt-12 items-center justify-center">
         <CreateLink onSubmit={onSubmit} targetUrl={targetUrl} />
       </div>
