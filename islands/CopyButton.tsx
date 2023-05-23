@@ -7,11 +7,11 @@ interface ButtonProps {
 
 const CopyButton = (props: ButtonProps) => {
   const [buttonText, setText] = useState("Copy");
-  const className = `focus:outline-none ${props.className ?? ''}`
+  const className = `focus:outline-none ${props.className ?? ""}`;
   return (
     <button
       class={className}
-      onClick={_e => {
+      onClick={(_e) => {
         navigator.clipboard.writeText(props.content);
         setText("Done");
         setTimeout(() => {

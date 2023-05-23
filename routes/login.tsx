@@ -3,10 +3,7 @@ import { Head } from "$fresh/runtime.ts";
 
 import SignIn from "../islands/SignIn.tsx";
 
-import {
-  publishableKey,
-  frontendApi,
-} from "../lib/auth.ts";
+import { frontendApi, publishableKey } from "../lib/auth.ts";
 
 interface LoginProps {
   path: string;
@@ -17,7 +14,7 @@ export const handler = (req: Request, ctx: HandlerContext) => {
   console.log(`login route with url ${req.url}`);
   const { pathname, searchParams } = new URL(req.url);
   const redirectUrl = searchParams && searchParams.get("redirect_url");
-  return ctx.render({redirectUrl, path: pathname});
+  return ctx.render({ redirectUrl, path: pathname });
 };
 
 export default function Page({ data }: PageProps<LoginProps>) {
@@ -29,8 +26,13 @@ export default function Page({ data }: PageProps<LoginProps>) {
       </Head>
       <body>
         <div className="flex flex-row min-h-screen bg-gray-200 items-center justify-center">
-          <SignIn path={path} redirectUrl={redirectUrl}
-            publicKey={publishableKey} frontendApi={frontendApi} showOnLoad={true}/>
+          <SignIn
+            path={path}
+            redirectUrl={redirectUrl}
+            publicKey={publishableKey}
+            frontendApi={frontendApi}
+            showOnLoad={true}
+          />
         </div>
       </body>
     </>

@@ -19,8 +19,8 @@ const LinkList = (props: LinkListProps) => {
     const {
       shortcode,
       value: href,
-    } = v
-    const linkout = `${targetUrl}${shortcode}`
+    } = v;
+    const linkout = `${targetUrl}${shortcode}`;
     return (
       <li class="flex flex-row flex-wrap gap-2 max-w-[100%]" key={i}>
         <div class="flex-wrap truncate overflow-hidden whitespace-nowrap">
@@ -37,7 +37,7 @@ const LinkList = (props: LinkListProps) => {
         </div>
       </li>
     );
-  })
+  });
   return (
     <div class="flex flex-col pt-4">
       <div class="text-xl md:text-2xl font-bold pb-6">{title}</div>
@@ -45,7 +45,7 @@ const LinkList = (props: LinkListProps) => {
         {linkList}
       </ol>
     </div>
-  )
-}
+  );
+};
 
 export default LinkList;

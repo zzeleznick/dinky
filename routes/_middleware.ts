@@ -1,17 +1,21 @@
 // routes/_middleware.ts
 import { MiddlewareHandlerContext } from "$fresh/server.ts";
-import { addUserToReqCtx, ensureLoggedInMiddleware, CtxWithAuth } from "../lib/auth.ts";
+import {
+  addUserToReqCtx,
+  CtxWithAuth,
+  ensureLoggedInMiddleware,
+} from "../lib/auth.ts";
 
-const ASSET_PATH_EXP = /(^\/_frsh)|(^\/styles)|(^\/(logo\.svg|favicon\.ico))/
-const PROTECTED_PATH_EXP = /(^\/stats)|(^\/admin)/
+const ASSET_PATH_EXP = /(^\/_frsh)|(^\/styles)|(^\/(logo\.svg|favicon\.ico))/;
+const PROTECTED_PATH_EXP = /(^\/stats)|(^\/admin)/;
 
 const isAssetPath = (pathname: string) => {
-  return ASSET_PATH_EXP.test(pathname)
-}
+  return ASSET_PATH_EXP.test(pathname);
+};
 
 const isProtectedPath = (pathname: string) => {
-  return PROTECTED_PATH_EXP.test(pathname)
-}
+  return PROTECTED_PATH_EXP.test(pathname);
+};
 
 export async function handler(
   req: Request,
@@ -29,17 +33,17 @@ export async function handler(
   // MARK: validate request for protected paths
   let resp;
   if (isProtectedPath(pathname)) {
-    resp = await ensureLoggedInMiddleware(req, ctx)
+    resp = await ensureLoggedInMiddleware(req, ctx);
     resp.headers.set("X-Dinky-Authed", "true");
   } else { // skip auth check
     if (redirect_url) {
-      console.log(`Post login redirect to ${redirect_url}`)
+      console.log(`Post login redirect to ${redirect_url}`);
     }
     resp = await ctx.next();
   }
   const diff = Math.floor(performance.now() - start);
-  console.log(`Request for pathname: '${pathname}' url: ${req.url} took ${diff} ms`);
+  console.log(
+    `Request for pathname: '${pathname}' url: ${req.url} took ${diff} ms`,
+  );
   return resp;
 }
-
-    

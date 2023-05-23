@@ -7,9 +7,7 @@ export async function handler(
   ctx: MiddlewareHandlerContext<CtxWithAuth>,
 ) {
   const { pathname } = new URL(req.url);
-  const resp = await ensureAdminMiddleware(req, ctx)
+  const resp = await ensureAdminMiddleware(req, ctx);
   console.log(`Admin pathname: '${pathname}', url: ${req.url}`);
   return resp;
 }
-
-    

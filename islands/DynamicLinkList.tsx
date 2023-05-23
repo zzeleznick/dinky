@@ -16,7 +16,7 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
     title,
     links = [],
   } = props;
-  
+
   const [allLinks, setLinks] = useState(links);
 
   const onSubmit = (resp: createShortcodeResponse) => {
@@ -28,19 +28,19 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
     const renderableLink = {
       value,
       shortcode,
-      user: '',
+      user: "",
       createdTs: 0,
-    }
-    setLinks([...allLinks, {...renderableLink}]);
-  }
+    };
+    setLinks([...allLinks, { ...renderableLink }]);
+  };
   return (
     <>
-    <div class="flex pt-12 items-center justify-center">
-      <CreateLink onSubmit={onSubmit} targetUrl={targetUrl}/>
-    </div>
-    <LinkList title={title} targetUrl={targetUrl} links={allLinks} />
+      <div class="flex pt-12 items-center justify-center">
+        <CreateLink onSubmit={onSubmit} targetUrl={targetUrl} />
+      </div>
+      <LinkList title={title} targetUrl={targetUrl} links={allLinks} />
     </>
-  )
-}
+  );
+};
 
 export default DynamicLinkList;

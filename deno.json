@@ -4,7 +4,7 @@
     "start": "deno run -A --watch=static/,routes/ --unstable dev.ts",
     "bench": "deno bench bench.ts",
     "build:css": "deno run --allow-env --allow-read --allow-write build.css.ts",
-    "serve": "deno run --unstable --allow-env --allow-read --allow-net --allow-write --allow-ffi main.ts"
+    "fmt": "deno fmt"
   },
   "compilerOptions": {
     "jsx": "react-jsx",

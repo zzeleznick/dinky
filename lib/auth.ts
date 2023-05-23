@@ -1,6 +1,6 @@
 import type { MiddlewareHandlerContext } from "$fresh/server.ts";
 import Clerk from "@clerk/clerk-js";
-import * as jose from 'jose';
+import * as jose from "jose";
 
 import { getCookies } from "std/http/cookie.ts";
 import { redirect } from "./http.ts";
@@ -22,70 +22,69 @@ const LocalWellKnownKeys = [
     "kid": CLERK_KID,
     "kty": "RSA",
     "n": CLERK_N,
-    "use": "sig"
+    "use": "sig",
   },
-]
+];
 
 interface JWTClaimValidationFailed {
   code: string;
 }
 
-
 export class TokenExpiredError extends TokenError {
   constructor(msg: string) {
     super(msg);
-    this.name = 'TokenExpiredError';
+    this.name = "TokenExpiredError";
   }
 }
 
 export class EmptyTokenError extends TokenError {
   constructor(msg: string) {
     super(msg);
-    this.name = 'EmptyTokenError';
+    this.name = "EmptyTokenError";
   }
 }
 
 export class MissingPublicKeyError extends TokenError {
   constructor(msg: string) {
     super(msg);
-    this.name = 'MissingPublicKeyError';
+    this.name = "MissingPublicKeyError";
   }
 }
 
 export class PublicKeyMismatchError extends TokenError {
   constructor(msg: string) {
     super(msg);
-    this.name = 'PublicKeyMismatchError';
+    this.name = "PublicKeyMismatchError";
   }
 }
 
 export class TokenSignatureError extends TokenError {
   constructor(msg: string) {
     super(msg);
-    this.name = 'TokenSignatureError';
+    this.name = "TokenSignatureError";
   }
 }
 
 export class UnknownTokenError extends TokenError {
   constructor(msg: string) {
     super(msg);
-    this.name = 'UnknownTokenError';
+    this.name = "UnknownTokenError";
   }
 }
 
 export const getCookie = (req: Request, name = "__session") => {
   const cookie = getCookies(req.headers)[name] ?? "";
   return decodeURIComponent(cookie);
-}
+};
 
 type CustomJwt = {
   avatar?: string;
-} & jose.JWTPayload; 
+} & jose.JWTPayload;
 
 export const jwtVerify = async (jwt: string) => {
   const publicKey = await jose.importJWK(LocalWellKnownKeys?.[0], "RS256");
   if (!jwt) {
-    throw new EmptyTokenError('Please log in')
+    throw new EmptyTokenError("Please log in");
   }
   try {
     const decoded = await jose.jwtVerify(jwt, publicKey, {});
@@ -95,16 +94,19 @@ export const jwtVerify = async (jwt: string) => {
   } catch (err) {
     if ((err as JWTClaimValidationFailed).code == "ERR_JWT_EXPIRED") {
       console.warn(`warn: JWT is expired`);
-      throw new TokenExpiredError('Try logging in again')
-    } else if ((err as JWTClaimValidationFailed).code == "ERR_JWS_SIGNATURE_VERIFICATION_FAILED") {
+      throw new TokenExpiredError("Try logging in again");
+    } else if (
+      (err as JWTClaimValidationFailed).code ==
+        "ERR_JWS_SIGNATURE_VERIFICATION_FAILED"
+    ) {
       console.error(`JWT failed signature validation`);
-      throw new TokenSignatureError('Try logging in again')
+      throw new TokenSignatureError("Try logging in again");
     } else {
       console.error(`JWT failed validation`, err);
-      throw new UnknownTokenError('Try logging in again')
+      throw new UnknownTokenError("Try logging in again");
     }
   }
-}
+};
 
 export interface CtxWithAuth {
   user?: string;
@@ -113,8 +115,8 @@ export interface CtxWithAuth {
 }
 
 const isAdmin = (user?: string) => {
-  return Boolean(ADMIN_ID && user && user === ADMIN_ID)
-}
+  return Boolean(ADMIN_ID && user && user === ADMIN_ID);
+};
 
 export const addUserToReqCtx = async (
   req: Request,
@@ -130,37 +132,35 @@ export const addUserToReqCtx = async (
     if (err instanceof EmptyTokenError) {
       // pass
     } else if (err instanceof TokenExpiredError) {
-     // pass
+      // pass
     } else {
-      console.error(`JWT err: ${err}`)
+      console.error(`JWT err: ${err}`);
     }
   }
   ctx.state.user = user;
   ctx.state.admin = isAdmin(user);
-}
+};
 
 export const ensureLoggedInMiddleware = async (
   req: Request,
   ctx: MiddlewareHandlerContext<CtxWithAuth>,
 ) => {
-
   if (!ctx.state.user) {
     return redirect(`/login?redirect_url=${encodeURIComponent(req.url)}`);
   }
 
   return await ctx.next();
-}
+};
 
 export const ensureAdminMiddleware = async (
   req: Request,
   ctx: MiddlewareHandlerContext<CtxWithAuth>,
 ) => {
-
-  console.log('ensureAdminMiddleware', ctx.state.user, ADMIN_ID);
+  console.log("ensureAdminMiddleware", ctx.state.user, ADMIN_ID);
 
   if (!ctx.state.admin) {
     return redirect(`/login?redirect_url=${encodeURIComponent(req.url)}`);
   }
 
   return await ctx.next();
-}
+};

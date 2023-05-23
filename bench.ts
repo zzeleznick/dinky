@@ -1,27 +1,27 @@
 import {
-    randomString,
-    randomStringBase,
-    randomStringA,
-    randomStringB,
-    randomStringC,
-} from './lib.ts'; 
+  randomString,
+  randomStringA,
+  randomStringB,
+  randomStringBase,
+  randomStringC,
+} from "./lib.ts";
 
 Deno.bench("randomStringBase", { group: "timing", baseline: true }, () => {
-    randomStringBase();
+  randomStringBase();
 });
 
 Deno.bench("randomStringA", { group: "timing" }, () => {
-    randomStringA();
+  randomStringA();
 });
 
 Deno.bench("randomStringB", { group: "timing" }, () => {
-    randomStringB();
+  randomStringB();
 });
 
 Deno.bench("randomStringC", { group: "timing" }, () => {
-    randomStringC();
+  randomStringC();
 });
 
 Deno.bench("randomString", { group: "timing" }, () => {
-    randomString();
+  randomString();
 });
