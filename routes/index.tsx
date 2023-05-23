@@ -63,6 +63,7 @@ export default function Page({ data }: PageProps<CtxData>) {
     targetUrl,
     links = [],
   } = data;
+
   return (
     <>
       <Head>

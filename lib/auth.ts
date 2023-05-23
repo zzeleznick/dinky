@@ -73,7 +73,6 @@ export class UnknownTokenError extends TokenError {
 }
 
 export const getCookie = (req: Request, name = "__session") => {
-  console.log(`cookies: ${JSON.stringify(getCookies(req.headers), null)}`)
   const cookie = getCookies(req.headers)[name] ?? "";
   return decodeURIComponent(cookie);
 };

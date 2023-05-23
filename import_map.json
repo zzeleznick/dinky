@@ -11,9 +11,7 @@
     "preact": "https://esm.sh/preact@10.13.1",
     "preact/": "https://esm.sh/preact@10.13.1/",
     "twind": "https://esm.sh/twind@0.16.19",
-    "twind/": "https://esm.sh/twind@0.16.19/",
-    "@nanostores/preact": "https://esm.sh/v124/*@nanostores/preact@0.4.1",
-    "nanostores": "https://esm.sh/v124/nanostores@0.8.1"
+    "twind/": "https://esm.sh/twind@0.16.19/"
   },
   "scopes": {}
 }

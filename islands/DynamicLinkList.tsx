@@ -1,10 +1,10 @@
-import { useState } from "preact/hooks";
+import { useRef, useState } from "preact/hooks";
 import CreateLink from "./CreateLink.tsx";
 import LinkList from "../components/LinkList.tsx";
 import { createShortcodeResponse } from "../lib/api.ts";
+import { fetchLinksFromAPI } from "../lib/client.ts";
 import type { LinkDatum } from "../lib/db.ts";
-import { useStore } from '@nanostores/preact';
-import { isLoggedInFactory } from '../components/Store.ts';
+import { loggedInRef } from "../store/authStore.ts";
 
 interface DynamicLinkListProps {
   targetUrl: string;
@@ -19,9 +19,16 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
     links = [],
   } = props;
 
+  const didFetch = useRef(false);
   const [allLinks, setLinks] = useState(links);
-  const isLoggedIn = isLoggedInFactory(false)
-  const $loggedIn = useStore(isLoggedIn);
+
+  if (!allLinks.length && !didFetch.current && loggedInRef.value) {
+    Promise.resolve(fetchLinksFromAPI()).then((v = []) => {
+      console.log(`Fetched ${v.length} records`);
+      setLinks(v);
+      didFetch.current = true;
+    });
+  }
 
   const onSubmit = (resp: createShortcodeResponse) => {
     console.log(`DynamicLinkList onSubmit resp: ${JSON.stringify(resp)}`);
@@ -37,9 +44,9 @@ const DynamicLinkList = (props: DynamicLinkListProps) => {
     };
     setLinks([...allLinks, { ...renderableLink }]);
   };
+
   return (
     <>
-      <> { $loggedIn ? 'Logged In' : 'Not Logged In'} </>
       <div class="flex pt-12 items-center justify-center">
         <CreateLink onSubmit={onSubmit} targetUrl={targetUrl} />
       </div>
