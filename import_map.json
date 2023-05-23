@@ -1,6 +1,7 @@
 {
   "imports": {
     "@clerk/clerk-js": "https://esm.sh/@clerk/clerk-js@4.39.0/",
+    "@clerk/clerk-react": "https://esm.sh/@clerk/clerk-react@4.16.2?alias=react:preact/compat,react-dom:preact/compat,@types/react:preact/compat,react/jsx-runtime:preact/compat/jsx-runtime&deps=preact@10.13.1",
     "jose": "https://esm.sh/jose@4.14.4",
     "$fresh/": "https://deno.land/x/fresh@1.1.5/",
     "postcss/": "https://deno.land/x/postcss@8.4.16/",
